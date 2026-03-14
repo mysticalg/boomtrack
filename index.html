@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
@@ -20,7 +20,11 @@
     <header class="site-header" id="top">
       <div class="container nav-wrap">
         <a class="brand" href="#top" aria-label="Infinite Dimensions home">
-          <span class="brand-icon" aria-hidden="true">∞</span>
+          <span class="brand-icon-wrap" aria-hidden="true">
+            <span class="brand-orbit orbit-a"></span>
+            <span class="brand-orbit orbit-b"></span>
+            <span class="brand-core">∞</span>
+          </span>
           <span class="brand-text">Infinite Dimensions</span>
         </a>
         <button
@@ -36,6 +40,8 @@
         <nav id="siteNav" class="site-nav" aria-label="Main navigation">
           <a href="#music" title="Jump to latest music">🎵 Music</a>
           <a href="#merch" title="Shop Printful powered merch">🛍️ Merch</a>
+          <a href="#news" title="Read recent project blog updates">📰 News</a>
+          <a href="#board" title="View and join the community board">💬 Community</a>
           <a href="#account" title="Register, login, or manage your profile">👤 My Account</a>
           <a href="#about" title="Learn about the project">✨ About</a>
           <a href="#events" title="See upcoming events">📅 Events</a>
@@ -115,6 +121,58 @@
           <p class="microcopy">
             Admin tip: run <code>python scripts/sync_printful_products.py --help</code> to refresh this grid with your live Printful shop.
           </p>
+        </div>
+      </section>
+
+      <section class="section" id="news">
+        <div class="container">
+          <h2>Project News</h2>
+          <p class="section-subtitle">Dated studio logs and release updates from the Infinite Dimensions timeline.</p>
+          <div class="news-grid">
+            <article class="news-card">
+              <p class="news-date">March 11, 2026</p>
+              <h3>🎚️ Mix Session Complete: Starlight Engine</h3>
+              <p>Final mastering passed. The single now has dynamic masters prepared for streaming and live listening events.</p>
+            </article>
+            <article class="news-card">
+              <p class="news-date">February 28, 2026</p>
+              <h3>🌠 Visual Identity Refresh</h3>
+              <p>Updated cosmic branding, cleaner iconography, and a refined typography system to improve readability and mood.</p>
+            </article>
+            <article class="news-card">
+              <p class="news-date">January 19, 2026</p>
+              <h3>🧪 New Sound Lab Opened</h3>
+              <p>The project added a dedicated low-latency production chain to speed up ideation and reduce arrangement bottlenecks.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alt" id="board">
+        <div class="container">
+          <h2>Community Message Board</h2>
+          <p class="section-subtitle">Publicly readable. Posting and threaded replies require login.</p>
+
+          <article class="board-card" aria-labelledby="boardHeading">
+            <h3 id="boardHeading">Threaded Discussions</h3>
+            <form id="boardForm" class="board-form" novalidate>
+              <label for="boardMessage">Start a new thread</label>
+              <textarea
+                id="boardMessage"
+                name="message"
+                rows="4"
+                maxlength="500"
+                placeholder="Share your thoughts on recent tracks, live sessions, or merch ideas…"
+                title="Login required to post"
+              ></textarea>
+              <div class="board-form-actions">
+                <button class="btn btn-primary" id="boardSubmit" type="submit" title="Publish your message">🛰️ Post message</button>
+                <small id="boardHint" class="microcopy">💡 Login in My Account to publish posts and replies.</small>
+              </div>
+            </form>
+            <p id="boardStatus" class="account-message" aria-live="polite"></p>
+            <div id="boardThreads" class="board-threads" aria-label="Community threads"></div>
+          </article>
         </div>
       </section>
 
@@ -246,7 +304,7 @@
                 <ul class="feature-list">
                   <li>🎯 Save release reminders</li>
                   <li>🛒 Sync merch wishlists</li>
-                  <li>💬 Get insider updates</li>
+                  <li>💬 Participate in the message board</li>
                 </ul>
               </div>
 
