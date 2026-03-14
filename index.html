@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Infinite Dimensions | Music Project</title>
+    <meta
+      name="description"
+      content="Infinite Dimensions — an immersive music project blending mystical textures, deep rhythms, and cinematic soundscapes."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header" id="top">
+      <div class="container nav-wrap">
+        <a class="brand" href="#top" aria-label="Infinite Dimensions home">
+          <span class="brand-icon" aria-hidden="true">∞</span>
+          <span class="brand-text">Infinite Dimensions</span>
+        </a>
+        <button
+          class="nav-toggle"
+          id="navToggle"
+          aria-label="Toggle navigation"
+          aria-expanded="false"
+          aria-controls="siteNav"
+          title="Open navigation menu"
+        >
+          ☰
+        </button>
+        <nav id="siteNav" class="site-nav" aria-label="Main navigation">
+          <a href="#music" title="Jump to latest music">🎵 Music</a>
+          <a href="#about" title="Learn about the project">✨ About</a>
+          <a href="#events" title="See upcoming events">📅 Events</a>
+          <a href="#newsletter" title="Join for exclusive updates">✉️ Join</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div>
+            <p class="eyebrow">MysticalG presents</p>
+            <h1>Infinite Dimensions</h1>
+            <p class="lead">
+              A sonic journey through ambient textures, cinematic bass, and cosmic storytelling.
+              Built for listeners who love atmosphere, depth, and emotion.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#music" title="Listen to featured tracks now">▶ Listen Now</a>
+              <a class="btn btn-ghost" href="#newsletter" title="Get notified about new releases">🔔 Get Updates</a>
+            </div>
+          </div>
+          <aside class="hero-card" aria-label="Current release information">
+            <h2>Now Streaming</h2>
+            <p class="release-title">“Starlight Engine”</p>
+            <p class="muted">Single • 2026</p>
+            <div class="progress-wrap" title="Listening progress preview">
+              <div class="progress-bar"></div>
+            </div>
+            <p class="microcopy">Tip: replace demo tracks with your real embeds when ready.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section" id="music">
+        <div class="container">
+          <h2>Featured Music</h2>
+          <p class="section-subtitle">Quick previews to keep the page fast and responsive.</p>
+          <div class="music-grid">
+            <!-- Card template used for each track preview -->
+            <article class="track-card">
+              <h3>🌌 Parallel Dawn</h3>
+              <p>Dream-wave synths and pulse-driven percussion.</p>
+              <audio controls preload="none" aria-label="Play Parallel Dawn preview">
+                <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_0fbeef8e95.mp3?filename=future-bass-117997.mp3" type="audio/mpeg" />
+              </audio>
+            </article>
+            <article class="track-card">
+              <h3>🪐 Drift Beyond Time</h3>
+              <p>Slow-burning ambient layers for deep focus.</p>
+              <audio controls preload="none" aria-label="Play Drift Beyond Time preview">
+                <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_8f72ec84da.mp3?filename=atmospheric-ambient-124841.mp3" type="audio/mpeg" />
+              </audio>
+            </article>
+            <article class="track-card">
+              <h3>⚡ Crystal Reactor</h3>
+              <p>Energetic cinematic build with bold low-end impact.</p>
+              <audio controls preload="none" aria-label="Play Crystal Reactor preview">
+                <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7b4800f2f8.mp3?filename=electronic-future-beat-117545.mp3" type="audio/mpeg" />
+              </audio>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alt" id="about">
+        <div class="container two-col">
+          <div>
+            <h2>About the Project</h2>
+            <p>
+              Infinite Dimensions explores sound as a portal: blending modern electronic production
+              with spiritual and cinematic influences. Every release is designed to feel immersive,
+              emotional, and visually evocative.
+            </p>
+            <ul class="feature-list">
+              <li>🧭 Story-led releases with recurring themes</li>
+              <li>🎚️ High-detail sound design and dynamic mixes</li>
+              <li>🚀 Fast-loading website architecture for smooth playback</li>
+            </ul>
+          </div>
+          <div class="stats-panel" role="presentation">
+            <div><strong>12+</strong><span>Tracks in production</span></div>
+            <div><strong>4</strong><span>Core sonic worlds</span></div>
+            <div><strong>1</strong><span>Unified vision: Infinite Dimensions</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="events">
+        <div class="container">
+          <h2>Upcoming Moments</h2>
+          <div class="timeline">
+            <article>
+              <h3>🎧 Live Listening Session</h3>
+              <p class="muted">Online • April 2026</p>
+              <p>Exclusive first listen + behind-the-scenes production breakdown.</p>
+            </article>
+            <article>
+              <h3>🛰️ New Single Premiere</h3>
+              <p class="muted">Global streaming • May 2026</p>
+              <p>Launch of the next chapter in the Infinite Dimensions story arc.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alt" id="newsletter">
+        <div class="container">
+          <h2>Join the Transmission</h2>
+          <p class="section-subtitle">Get release alerts, event invites, and creative updates.</p>
+          <form class="signup-form" id="signupForm" novalidate>
+            <label for="email">Email address</label>
+            <div class="input-row">
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                placeholder="you@example.com"
+                aria-describedby="emailHelp"
+                title="Enter a valid email to get project updates"
+              />
+              <button class="btn btn-primary" type="submit">Join</button>
+            </div>
+            <small id="emailHelp">We only send project updates. No spam, ever.</small>
+            <p id="formMessage" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <p>© <span id="year"></span> Infinite Dimensions • Created by MysticalG</p>
+        <a href="mailto:hello@mysticalg.kesug.com" title="Send an email to Infinite Dimensions">
+          📩 Contact
+        </a>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
