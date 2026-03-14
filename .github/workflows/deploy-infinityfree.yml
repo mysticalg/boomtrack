@@ -11,8 +11,8 @@ on:
       - 'script.js'
       - 'data/printful-products.json'
       - 'assets/**'
-      - 'scripts/deploy_infinityfree.py'
-      - 'scripts/sync_printful_products.py'
+      - 'scripts/deploy_infinityfree.php'
+      - 'scripts/sync_printful_products.php'
       - '.github/workflows/deploy-infinityfree.yml'
   # Manual trigger for urgent fixes or first-time validation.
   workflow_dispatch:
@@ -33,17 +33,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
       - name: Dry-run deployment plan
         env:
           # Support repository/organization variables and lowercase names.
           FTP_TARGET_DIR: ${{ secrets.FTP_TARGET_DIR || secrets.ftp_target_dir || vars.FTP_TARGET_DIR || vars.ftp_target_dir }}
         run: |
-          python3 scripts/deploy_infinityfree.py --dry-run
+          php scripts/deploy_infinityfree.php --dry-run
 
 
 
@@ -52,7 +47,7 @@ jobs:
           PRINTFUL_API_KEY: ${{ secrets.PRINTFUL_API_KEY || secrets.printful_api_key || vars.PRINTFUL_API_KEY || vars.printful_api_key }}
         run: |
           if [[ -n "$PRINTFUL_API_KEY" ]]; then
-            python3 scripts/sync_printful_products.py
+            php scripts/sync_printful_products.php
           else
             echo "PRINTFUL_API_KEY missing; skipping catalog sync and deploying existing data/printful-products.json"
           fi
@@ -79,4 +74,4 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD || secrets.ftp_password || vars.FTP_PASSWORD || vars.ftp_password }}
           FTP_TARGET_DIR: ${{ secrets.FTP_TARGET_DIR || secrets.ftp_target_dir || vars.FTP_TARGET_DIR || vars.ftp_target_dir }}
         run: |
-          python3 scripts/deploy_infinityfree.py
+          php scripts/deploy_infinityfree.php
