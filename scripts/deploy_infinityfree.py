@@ -14,6 +14,15 @@ from pathlib import Path
 from typing import Iterable
 
 
+def first_non_empty_env(*names: str, default: str | None = None) -> str | None:
+    """Return the first non-empty environment variable from the provided names."""
+    for name in names:
+        value = os.getenv(name)
+        if value and value.strip():
+            return value.strip()
+    return default
+
+
 def collect_files(site_root: Path) -> list[Path]:
     """Collect files to publish, keeping deployment fast and predictable."""
     included = ["index.html", "styles.css", "script.js"]
@@ -75,7 +84,7 @@ def main() -> int:
     parser.add_argument("--site-root", default=".", help="Path to website project root")
     parser.add_argument(
         "--remote-dir",
-        default=os.getenv("FTP_TARGET_DIR", "htdocs"),
+        default=first_non_empty_env("FTP_TARGET_DIR", "ftp_target_dir", default="htdocs"),
         help="Remote directory on FTP server (default: htdocs or FTP_TARGET_DIR)",
     )
     parser.add_argument("--dry-run", action="store_true", help="Show planned uploads without sending files")
@@ -92,12 +101,16 @@ def main() -> int:
             print(f"[dry-run] upload {path} -> {remote_file}")
         return 0
 
-    ftp_host = os.getenv("FTP_HOST", "ftpupload.net")
-    ftp_user = os.getenv("FTP_USER")
-    ftp_password = os.getenv("FTP_PASSWORD")
+    # Accept common alias names to make CI setup less error-prone.
+    ftp_host = first_non_empty_env("FTP_HOST", "ftp_host", default="ftpupload.net")
+    ftp_user = first_non_empty_env("FTP_USER", "FTP_USERNAME", "ftp_user", "ftp_username")
+    ftp_password = first_non_empty_env("FTP_PASSWORD", "ftp_password")
 
     if not ftp_user or not ftp_password:
-        raise SystemExit("Set FTP_USER and FTP_PASSWORD environment variables before deploying.")
+        raise SystemExit(
+            "Set FTP credentials before deploying. Supported variables: "
+            "FTP_USER/FTP_USERNAME and FTP_PASSWORD."
+        )
 
     print(f"Connecting to {ftp_host}...")
     with FTP(ftp_host, timeout=30) as ftp:
