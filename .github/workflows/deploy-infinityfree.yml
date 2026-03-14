@@ -1,0 +1,50 @@
+name: Deploy to InfinityFree
+
+on:
+  # Automatic deployment whenever production files are pushed to main.
+  push:
+    branches:
+      - main
+    paths:
+      - 'index.html'
+      - 'styles.css'
+      - 'script.js'
+      - 'assets/**'
+      - 'scripts/deploy_infinityfree.py'
+      - '.github/workflows/deploy-infinityfree.yml'
+  # Manual trigger for urgent fixes or first-time validation.
+  workflow_dispatch:
+
+# Prevent overlapping deployments that can race and partially overwrite files.
+concurrency:
+  group: infinityfree-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Dry-run deployment plan
+        env:
+          FTP_TARGET_DIR: ${{ secrets.FTP_TARGET_DIR }}
+        run: |
+          python3 scripts/deploy_infinityfree.py --dry-run
+
+      - name: Deploy via FTP
+        env:
+          # Keep credentials in GitHub secrets only.
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_TARGET_DIR: ${{ secrets.FTP_TARGET_DIR }}
+        run: |
+          python3 scripts/deploy_infinityfree.py
