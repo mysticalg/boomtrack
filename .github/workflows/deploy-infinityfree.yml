@@ -9,8 +9,10 @@ on:
       - 'index.html'
       - 'styles.css'
       - 'script.js'
+      - 'data/printful-products.json'
       - 'assets/**'
       - 'scripts/deploy_infinityfree.py'
+      - 'scripts/sync_printful_products.py'
       - '.github/workflows/deploy-infinityfree.yml'
   # Manual trigger for urgent fixes or first-time validation.
   workflow_dispatch:
@@ -43,6 +45,17 @@ jobs:
         run: |
           python3 scripts/deploy_infinityfree.py --dry-run
 
+
+
+      - name: Sync Printful catalog (optional)
+        env:
+          PRINTFUL_API_KEY: ${{ secrets.PRINTFUL_API_KEY || secrets.printful_api_key || vars.PRINTFUL_API_KEY || vars.printful_api_key }}
+        run: |
+          if [[ -n "$PRINTFUL_API_KEY" ]]; then
+            python3 scripts/sync_printful_products.py
+          else
+            echo "PRINTFUL_API_KEY missing; skipping catalog sync and deploying existing data/printful-products.json"
+          fi
 
       - name: Validate FTP variables are available
         env:
