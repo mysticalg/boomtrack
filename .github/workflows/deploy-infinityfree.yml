@@ -23,6 +23,9 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Required so environment-scoped variables/secrets (e.g., boomtrack) are available in this job.
+    environment:
+      name: boomtrack
 
     steps:
       - name: Checkout repository
@@ -39,6 +42,20 @@ jobs:
           FTP_TARGET_DIR: ${{ secrets.FTP_TARGET_DIR || secrets.ftp_target_dir || vars.FTP_TARGET_DIR || vars.ftp_target_dir }}
         run: |
           python3 scripts/deploy_infinityfree.py --dry-run
+
+
+      - name: Validate FTP variables are available
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST || secrets.ftp_host || vars.FTP_HOST || vars.ftp_host }}
+          FTP_USER: ${{ secrets.FTP_USER || secrets.ftp_user || vars.FTP_USER || vars.ftp_user }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD || secrets.ftp_password || vars.FTP_PASSWORD || vars.ftp_password }}
+          FTP_TARGET_DIR: ${{ secrets.FTP_TARGET_DIR || secrets.ftp_target_dir || vars.FTP_TARGET_DIR || vars.ftp_target_dir }}
+        run: |
+          # Print only variable presence, never secret values.
+          [[ -n "$FTP_HOST" ]] && echo "FTP_HOST is set" || echo "FTP_HOST is missing (will default to ftpupload.net)"
+          [[ -n "$FTP_TARGET_DIR" ]] && echo "FTP_TARGET_DIR is set" || echo "FTP_TARGET_DIR is missing (will default to htdocs)"
+          [[ -n "$FTP_USER" ]] && echo "FTP_USER is set" || { echo "FTP_USER is missing"; exit 1; }
+          [[ -n "$FTP_PASSWORD" ]] && echo "FTP_PASSWORD is set" || { echo "FTP_PASSWORD is missing"; exit 1; }
 
       - name: Deploy via FTP
         env:
