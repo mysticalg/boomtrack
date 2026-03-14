@@ -282,8 +282,32 @@
               <div class="social-auth" aria-label="Social sign in options">
                 <p class="microcopy">Or continue with a social provider:</p>
                 <p class="microcopy social-help" id="socialHelp">
-                  💡 Social login is simulated in this demo. Click a provider to create or restore a profile instantly.
+                  💡 Pick a username first, then connect a provider. Your provider + username pair is remembered for future sign-ins.
                 </p>
+                <form id="socialRegistrationForm" class="social-registration-form" novalidate>
+                  <label for="socialUsername">Username</label>
+                  <input
+                    id="socialUsername"
+                    name="username"
+                    type="text"
+                    autocomplete="username"
+                    placeholder="cosmic_listener"
+                    maxlength="24"
+                    required
+                    title="Choose your public username for social sign in"
+                  />
+                  <label for="socialDisplayName">Display name (optional)</label>
+                  <input
+                    id="socialDisplayName"
+                    name="displayName"
+                    type="text"
+                    autocomplete="nickname"
+                    placeholder="Cosmic Listener"
+                    maxlength="40"
+                    title="Optional friendly name shown in account welcome text"
+                  />
+                  <small class="microcopy" id="socialRegistrationHelp">Use letters, numbers, underscores, and dots only.</small>
+                </form>
                 <div class="social-row">
                   <button class="btn btn-ghost social-btn" type="button" data-provider="google" title="Register or login with Google">
                     <span class="social-icon" aria-hidden="true">
@@ -336,6 +360,7 @@
 
               <div id="accountView" hidden>
                 <p><strong id="accountName">-</strong></p>
+                <p class="muted" id="accountUsernameWrap">Username: <span id="accountUsername">-</span></p>
                 <p class="muted">Signed in via <span id="accountProvider">email</span></p>
                 <p class="microcopy" id="accountEmail">-</p>
                 <button id="logoutBtn" class="btn btn-ghost" type="button" title="Log out of your account">↩ Log out</button>

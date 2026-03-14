@@ -42,11 +42,15 @@ const loginTab = document.getElementById('loginTab');
 const registerPanel = document.getElementById('registerPanel');
 const loginPanel = document.getElementById('loginPanel');
 const socialButtons = document.querySelectorAll('.social-btn');
+const socialRegistrationForm = document.getElementById('socialRegistrationForm');
+const socialUsernameInput = document.getElementById('socialUsername');
+const socialDisplayNameInput = document.getElementById('socialDisplayName');
 const guestView = document.getElementById('guestView');
 const accountView = document.getElementById('accountView');
 const accountName = document.getElementById('accountName');
 const accountProvider = document.getElementById('accountProvider');
 const accountEmail = document.getElementById('accountEmail');
+const accountUsername = document.getElementById('accountUsername');
 const logoutBtn = document.getElementById('logoutBtn');
 
 // Message board local-storage setup for fast, backend-free demo behavior.
@@ -57,6 +61,38 @@ const boardSubmit = document.getElementById('boardSubmit');
 const boardHint = document.getElementById('boardHint');
 const boardStatus = document.getElementById('boardStatus');
 const boardThreads = document.getElementById('boardThreads');
+
+const SOCIAL_ACCOUNT_STORAGE_KEY = 'id_social_accounts';
+
+// Username rules stay strict so IDs are clean and easy to mention in the community board.
+function normalizeUsername(value) {
+  return value.trim().toLowerCase();
+}
+
+function isValidUsername(value) {
+  return /^[a-z0-9._]{3,24}$/.test(value);
+}
+
+function loadSocialAccounts() {
+  const raw = localStorage.getItem(SOCIAL_ACCOUNT_STORAGE_KEY);
+
+  if (!raw) {
+    return {};
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch (error) {
+    console.error('Unable to parse social accounts', error);
+    localStorage.removeItem(SOCIAL_ACCOUNT_STORAGE_KEY);
+    return {};
+  }
+}
+
+function saveSocialAccounts(accounts) {
+  localStorage.setItem(SOCIAL_ACCOUNT_STORAGE_KEY, JSON.stringify(accounts));
+}
 
 const defaultThreads = [
   {
@@ -117,7 +153,7 @@ function loadProfile() {
 }
 
 function setAuthView(profile) {
-  if (!guestView || !accountView || !accountName || !accountProvider || !accountEmail) {
+  if (!guestView || !accountView || !accountName || !accountProvider || !accountEmail || !accountUsername) {
     return;
   }
 
@@ -128,6 +164,7 @@ function setAuthView(profile) {
     guestView.hidden = true;
     accountView.hidden = false;
     accountName.textContent = `👋 ${profile.name}`;
+    accountUsername.textContent = `@${profile.username || profile.name}`;
     accountProvider.textContent = profile.provider;
     accountEmail.textContent = profile.email;
   }
@@ -276,7 +313,7 @@ function renderThreads() {
 
         targetThread.replies.push({
           id: `reply-${Date.now()}`,
-          author: activeProfile.name,
+          author: `@${activeProfile.username || activeProfile.name}`,
           message: replyText,
           createdAt: new Date().toISOString(),
         });
@@ -309,7 +346,7 @@ if (registerForm) {
       return;
     }
 
-    saveProfile({ name, email, provider: 'email' });
+    saveProfile({ name, username: normalizeUsername(name.replace(/\s+/g, '_')), email, provider: 'email' });
     setAccountMessage(`Account created. Welcome aboard, ${name}!`);
     registerForm.reset();
     renderThreads();
@@ -331,6 +368,7 @@ if (loginForm) {
     const currentProfile = loadProfile();
     const profile = {
       name: currentProfile?.name || email.split('@')[0],
+      username: currentProfile?.username || normalizeUsername((currentProfile?.name || email.split('@')[0]).replace(/\s+/g, '_')),
       email,
       provider: 'email',
     };
@@ -355,7 +393,32 @@ if (socialButtons.length) {
     button.addEventListener('click', () => {
       const provider = (button.dataset.provider || '').toLowerCase();
       const providerLabel = SOCIAL_PROVIDER_LABELS[provider] || 'Social provider';
+      const providerKey = `provider:${provider}`;
       const previousButtonMarkup = button.innerHTML;
+      const socialAccounts = loadSocialAccounts();
+      const socialProfile = socialAccounts[providerKey];
+      const enteredUsername = normalizeUsername((socialUsernameInput?.value || '').toString());
+      const enteredDisplayName = (socialDisplayNameInput?.value || '').toString().trim();
+
+      // Existing provider account can sign in instantly without re-entering onboarding fields.
+      if (socialProfile) {
+        saveProfile(socialProfile);
+        setAccountMessage(`Welcome back, @${socialProfile.username}. Signed in with ${providerLabel}.`);
+        renderThreads();
+        return;
+      }
+
+      if (!isValidUsername(enteredUsername)) {
+        setAccountMessage('Choose a username between 3-24 characters using letters, numbers, underscores, or dots.', true);
+        socialUsernameInput?.focus();
+        return;
+      }
+
+      if (Object.values(socialAccounts).some((profile) => profile.username === enteredUsername)) {
+        setAccountMessage(`@${enteredUsername} is already linked to another provider. Pick a different username.`, true);
+        socialUsernameInput?.focus();
+        return;
+      }
 
       // Loading affordance makes tap/click feedback immediate and prevents accidental double-clicks.
       button.disabled = true;
@@ -363,16 +426,23 @@ if (socialButtons.length) {
 
       // Simulates OAuth callback latency without blocking the UI thread.
       window.setTimeout(() => {
+        const baseName = enteredDisplayName || enteredUsername;
         const profile = {
-          name: `${providerLabel} listener`,
-          email: `${provider || 'social'}@example.com`,
+          name: baseName,
+          username: enteredUsername,
+          email: `${enteredUsername}+${provider || 'social'}@example.com`,
           provider: providerLabel,
         };
 
-        // Demo-only behavior: this simulates successful OAuth callback.
+        socialAccounts[providerKey] = profile;
+        saveSocialAccounts(socialAccounts);
         saveProfile(profile);
-        setAccountMessage(`Connected successfully with ${providerLabel}.`);
+        setAccountMessage(`Connected ${providerLabel}. Welcome, @${enteredUsername}.`);
         renderThreads();
+
+        if (socialRegistrationForm) {
+          socialRegistrationForm.reset();
+        }
 
         button.disabled = false;
         button.innerHTML = previousButtonMarkup;
@@ -409,7 +479,7 @@ if (boardForm && boardMessage) {
     const threads = loadThreads();
     threads.push({
       id: `thread-${Date.now()}`,
-      author: profile.name,
+      author: `@${profile.username || profile.name}`,
       message,
       createdAt: new Date().toISOString(),
       replies: [],
