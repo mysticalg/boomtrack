@@ -1,0 +1,60 @@
+name: Deploy to InfinityFree
+
+on:
+  # Automatic deployment whenever production files are pushed to main.
+  push:
+    branches:
+      - main
+    paths:
+      - 'index.html'
+      - 'styles.css'
+      - 'script.js'
+      - 'assets/**'
+      - 'scripts/deploy_infinityfree.py'
+      - '.github/workflows/deploy-infinityfree.yml'
+      - 'DEPLOYMENT.md'
+  # Manual trigger for urgent fixes or first-time validation.
+  workflow_dispatch:
+
+# Prevent overlapping deployments that can race and partially overwrite files.
+concurrency:
+  group: infinityfree-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      # Support both canonical and legacy secret names to reduce setup friction.
+      FTP_HOST: ${{ secrets.FTP_HOST || secrets.INFINITYFREE_FTP_HOST || 'ftpupload.net' }}
+      FTP_USER: ${{ secrets.FTP_USER || secrets.INFINITYFREE_FTP_USER }}
+      FTP_PASSWORD: ${{ secrets.FTP_PASSWORD || secrets.INFINITYFREE_FTP_PASSWORD }}
+      FTP_TARGET_DIR: ${{ secrets.FTP_TARGET_DIR || secrets.INFINITYFREE_FTP_TARGET_DIR || 'htdocs' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate deployment secrets
+        run: |
+          # Fail early with a clear message if credentials are not configured.
+          if [ -z "$FTP_USER" ] || [ -z "$FTP_PASSWORD" ]; then
+            echo "Missing FTP credentials. Add repository secrets:"
+            echo "- FTP_USER (or INFINITYFREE_FTP_USER)"
+            echo "- FTP_PASSWORD (or INFINITYFREE_FTP_PASSWORD)"
+            echo "Optional: FTP_HOST and FTP_TARGET_DIR"
+            exit 1
+          fi
+
+      - name: Dry-run deployment plan
+        run: |
+          python3 scripts/deploy_infinityfree.py --dry-run
+
+      - name: Deploy via FTP
+        run: |
+          python3 scripts/deploy_infinityfree.py
