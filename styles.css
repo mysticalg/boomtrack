@@ -460,8 +460,35 @@ input[type='email'] {
   flex-wrap: wrap;
 }
 
+
+.social-help {
+  margin-top: 0.35rem;
+}
+
 .social-btn {
-  min-width: 135px;
+  min-width: 145px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.social-icon {
+  width: 1rem;
+  height: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.social-btn[data-provider="x"] .social-icon,
+.social-btn[data-provider="github"] .social-icon {
+  color: #f3f5ff;
 }
 
 .site-footer {
