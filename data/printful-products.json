@@ -1,14 +1,13 @@
 {
   "last_synced": "2026-03-14T00:00:00+00:00",
-  "shop_id": "demo-shop",
-  "shop_title": "Infinite Dimensions Demo Catalog",
+  "source": "printful",
   "products": [
     {
       "id": "demo-hoodie",
       "title": "Infinite Dimensions Nebula Hoodie",
       "description": "Heavyweight unisex hoodie with cosmic nebula print.",
-      "image": "https://images.printify.com/mockup/hoodie-nebula.jpg",
-      "product_url": "https://printify.com/app/products/demo-hoodie",
+      "image": "https://images.printful.com/mockup/hoodie-nebula.jpg",
+      "product_url": "https://printful.com/app/products/demo-hoodie",
       "price_display": "From $54.99",
       "is_visible": true
     },
@@ -16,8 +15,8 @@
       "id": "demo-tee",
       "title": "Crystal Reactor Tour Tee",
       "description": "Soft cotton t-shirt with front/back artwork inspired by the single.",
-      "image": "https://images.printify.com/mockup/tee-reactor.jpg",
-      "product_url": "https://printify.com/app/products/demo-tee",
+      "image": "https://images.printful.com/mockup/tee-reactor.jpg",
+      "product_url": "https://printful.com/app/products/demo-tee",
       "price_display": "From $29.99",
       "is_visible": true
     },
@@ -25,8 +24,8 @@
       "id": "demo-mug",
       "title": "Starlight Engine Gradient Mug",
       "description": "11oz ceramic mug featuring the Infinite Dimensions sigil.",
-      "image": "https://images.printify.com/mockup/mug-starlight.jpg",
-      "product_url": "https://printify.com/app/products/demo-mug",
+      "image": "https://images.printful.com/mockup/mug-starlight.jpg",
+      "product_url": "https://printful.com/app/products/demo-mug",
       "price_display": "From $18.99",
       "is_visible": true
     },
@@ -34,8 +33,8 @@
       "id": "demo-poster",
       "title": "Parallel Dawn Studio Poster",
       "description": "Glossy wall poster with album-inspired cosmic landscape art.",
-      "image": "https://images.printify.com/mockup/poster-parallel-dawn.jpg",
-      "product_url": "https://printify.com/app/products/demo-poster",
+      "image": "https://images.printful.com/mockup/poster-parallel-dawn.jpg",
+      "product_url": "https://printful.com/app/products/demo-poster",
       "price_display": "From $24.99",
       "is_visible": true
     },
@@ -43,7 +42,7 @@
       "id": "demo-cap",
       "title": "Infinite Dimensions Orbit Cap",
       "description": "Structured dad cap with embroidered orbit sigil icon.",
-      "image": "https://images.printify.com/mockup/cap-orbit.jpg",
+      "image": "https://images.printful.com/mockup/cap-orbit.jpg",
       "product_url": null,
       "price_display": "From $27.50",
       "is_visible": true
@@ -52,8 +51,8 @@
       "id": "demo-tote",
       "title": "Echoes Utility Tote",
       "description": "Durable tote bag for daily carry with clean monochrome symbol print.",
-      "image": "https://images.printify.com/mockup/tote-echoes.jpg",
-      "product_url": "https://printify.com/app/products/demo-tote",
+      "image": "https://images.printful.com/mockup/tote-echoes.jpg",
+      "product_url": "https://printful.com/app/products/demo-tote",
       "price_display": "From $21.00",
       "is_visible": true
     }
