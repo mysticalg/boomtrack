@@ -15,19 +15,32 @@ export FTP_PASSWORD='YOUR_FTP_PASSWORD'
 export FTP_TARGET_DIR='htdocs'
 ```
 
-## 2) Preview upload plan (safe)
+## 2) Sync Printify products before deploy
+
+The merch section is powered by `data/printify-products.json` so the site stays fast and static.
+
+```bash
+export PRINTIFY_API_KEY='YOUR_PRINTIFY_API_KEY'
+python3 scripts/sync_printify_products.py --shop-id YOUR_PRINTIFY_SHOP_ID
+```
+
+If `--shop-id` is omitted, the script uses your first available shop.
+Use `--include-hidden` if you also want draft/hidden items in the catalog.
+You can also place `PRINTIFY_API_KEY=...` in a local `.env` file for convenience.
+
+## 3) Preview upload plan (safe)
 
 ```bash
 python3 scripts/deploy_infinityfree.py --dry-run
 ```
 
-## 3) Deploy to live site (manual)
+## 4) Deploy to live site (manual)
 
 ```bash
 python3 scripts/deploy_infinityfree.py
 ```
 
-## 4) Verify deployment
+## 5) Verify deployment
 
 ```bash
 curl -I https://mysticalg.kesug.com
@@ -56,12 +69,13 @@ Go to **GitHub → Repository → Settings → Secrets and variables → Actions
 - `FTP_USER` → your InfinityFree FTP username
 - `FTP_PASSWORD` → your InfinityFree FTP password
 - `FTP_TARGET_DIR` → usually `htdocs`
+- `PRINTIFY_API_KEY` → Printify API key used by a pre-deploy sync step (if you automate sync)
 
 ### First-run checklist
 
 1. Ensure your default deployment branch is `main` (or update the workflow branch filter).
-2. Add the four secrets above.
-3. Push to `main` or run **Actions → Deploy to InfinityFree → Run workflow**.
+2. Add the required secrets above.
+3. Run Printify sync, then push to `main` or run **Actions → Deploy to InfinityFree → Run workflow**.
 4. Confirm success in the Actions log, then verify with:
 
 ```bash
