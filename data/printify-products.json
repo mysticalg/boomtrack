@@ -1,6 +1,7 @@
 {
-  "last_synced": "sample data",
+  "last_synced": "2026-03-14T00:00:00+00:00",
   "shop_id": "demo-shop",
+  "shop_title": "Infinite Dimensions Demo Catalog",
   "products": [
     {
       "id": "demo-hoodie",
@@ -27,6 +28,33 @@
       "image": "https://images.printify.com/mockup/mug-starlight.jpg",
       "product_url": "https://printify.com/app/products/demo-mug",
       "price_display": "From $18.99",
+      "is_visible": true
+    },
+    {
+      "id": "demo-poster",
+      "title": "Parallel Dawn Studio Poster",
+      "description": "Glossy wall poster with album-inspired cosmic landscape art.",
+      "image": "https://images.printify.com/mockup/poster-parallel-dawn.jpg",
+      "product_url": "https://printify.com/app/products/demo-poster",
+      "price_display": "From $24.99",
+      "is_visible": true
+    },
+    {
+      "id": "demo-cap",
+      "title": "Infinite Dimensions Orbit Cap",
+      "description": "Structured dad cap with embroidered orbit sigil icon.",
+      "image": "https://images.printify.com/mockup/cap-orbit.jpg",
+      "product_url": null,
+      "price_display": "From $27.50",
+      "is_visible": true
+    },
+    {
+      "id": "demo-tote",
+      "title": "Echoes Utility Tote",
+      "description": "Durable tote bag for daily carry with clean monochrome symbol print.",
+      "image": "https://images.printify.com/mockup/tote-echoes.jpg",
+      "product_url": "https://printify.com/app/products/demo-tote",
+      "price_display": "From $21.00",
       "is_visible": true
     }
   ]

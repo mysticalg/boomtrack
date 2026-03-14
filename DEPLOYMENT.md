@@ -25,6 +25,8 @@ python3 scripts/sync_printify_products.py --shop-id YOUR_PRINTIFY_SHOP_ID
 ```
 
 If `--shop-id` is omitted, the script uses your first available shop.
+Use `--include-hidden` if you also want draft/hidden items in the catalog.
+You can also place `PRINTIFY_API_KEY=...` in a local `.env` file for convenience.
 
 ## 3) Preview upload plan (safe)
 

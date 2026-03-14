@@ -69,11 +69,20 @@ function renderMerchCards(products) {
 
     const link = document.createElement('a');
     link.className = 'btn btn-ghost';
-    link.href = product.product_url || '#';
-    link.target = '_blank';
-    link.rel = 'noreferrer noopener';
     link.textContent = 'View product ↗';
-    link.title = 'Open product details in a new tab';
+
+    if (product.product_url) {
+      link.href = product.product_url;
+      link.target = '_blank';
+      link.rel = 'noreferrer noopener';
+      link.title = 'Open product details in a new tab';
+    } else {
+      // Keeps UI transparent when a listing has no public storefront URL yet.
+      link.href = '#';
+      link.setAttribute('aria-disabled', 'true');
+      link.classList.add('disabled-link');
+      link.title = 'Publish/connect this product to a sales channel to enable public links';
+    }
 
     footer.append(price, link);
     card.append(image, title, description, footer);
@@ -103,7 +112,11 @@ async function loadMerchCatalog() {
 
     renderMerchCards(products);
     merchStatus.textContent = `✅ Showing ${products.length} products from your latest Printify sync.`;
-    merchLastUpdated.textContent = `Last sync: ${catalog.last_synced || 'Unknown'}`;
+
+    const syncedAt = catalog.last_synced ? new Date(catalog.last_synced) : null;
+    merchLastUpdated.textContent = syncedAt && !Number.isNaN(syncedAt.valueOf())
+      ? `Last sync: ${syncedAt.toLocaleString()}`
+      : 'Last sync: Unknown';
   } catch (error) {
     merchStatus.textContent = '⚠️ Unable to load merch catalog. Confirm data/printify-products.json exists and is valid JSON.';
     merchLastUpdated.textContent = 'Last sync: unavailable';
