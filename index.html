@@ -342,6 +342,22 @@
                     <span>X.com</span>
                   </button>
                 </div>
+                <section class="oauth-status-card" aria-live="polite" aria-label="OAuth and session status">
+                  <h4>🔐 OAuth + Session Status</h4>
+                  <p class="microcopy" id="oauthFlowStatus">Ready to authenticate with a social provider.</p>
+                  <p class="microcopy" id="sessionStatus">Session: not active</p>
+                  <div class="oauth-actions">
+                    <button
+                      class="btn btn-ghost"
+                      id="sessionRefreshBtn"
+                      type="button"
+                      title="Refresh the active social login session"
+                      disabled
+                    >
+                      ♻️ Refresh session
+                    </button>
+                  </div>
+                </section>
               </div>
 
               <p id="accountMessage" class="account-message" aria-live="polite"></p>

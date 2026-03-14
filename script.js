@@ -45,6 +45,9 @@ const socialButtons = document.querySelectorAll('.social-btn');
 const socialRegistrationForm = document.getElementById('socialRegistrationForm');
 const socialUsernameInput = document.getElementById('socialUsername');
 const socialDisplayNameInput = document.getElementById('socialDisplayName');
+const oauthFlowStatus = document.getElementById('oauthFlowStatus');
+const sessionStatus = document.getElementById('sessionStatus');
+const sessionRefreshBtn = document.getElementById('sessionRefreshBtn');
 const guestView = document.getElementById('guestView');
 const accountView = document.getElementById('accountView');
 const accountName = document.getElementById('accountName');
@@ -63,6 +66,103 @@ const boardStatus = document.getElementById('boardStatus');
 const boardThreads = document.getElementById('boardThreads');
 
 const SOCIAL_ACCOUNT_STORAGE_KEY = 'id_social_accounts';
+
+const SESSION_STORAGE_KEY = 'id_social_session';
+const SESSION_DURATION_MS = 30 * 60 * 1000;
+
+function setOauthFlowStatus(message, isError = false) {
+  if (!oauthFlowStatus) {
+    return;
+  }
+
+  oauthFlowStatus.style.color = isError ? '#ff9b9b' : 'var(--muted)';
+  oauthFlowStatus.textContent = message;
+}
+
+function loadSession() {
+  const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') {
+      return null;
+    }
+
+    return parsed;
+  } catch (error) {
+    console.error('Unable to parse social session', error);
+    localStorage.removeItem(SESSION_STORAGE_KEY);
+    return null;
+  }
+}
+
+function clearSession() {
+  localStorage.removeItem(SESSION_STORAGE_KEY);
+  updateSessionStatus(null);
+}
+
+function createSession(profile) {
+  // OAuth callback simulation: issue a short-lived local session token and expiration timestamp.
+  const now = Date.now();
+  const session = {
+    sessionToken: `sess_${Math.random().toString(36).slice(2)}_${now}`,
+    provider: profile.provider,
+    username: profile.username,
+    issuedAt: now,
+    expiresAt: now + SESSION_DURATION_MS,
+  };
+
+  localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+  updateSessionStatus(session);
+  return session;
+}
+
+function refreshSession() {
+  const existingSession = loadSession();
+
+  if (!existingSession) {
+    setOauthFlowStatus('No active social session to refresh.', true);
+    updateSessionStatus(null);
+    return;
+  }
+
+  const refreshedSession = {
+    ...existingSession,
+    issuedAt: Date.now(),
+    expiresAt: Date.now() + SESSION_DURATION_MS,
+  };
+
+  localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(refreshedSession));
+  updateSessionStatus(refreshedSession);
+  setOauthFlowStatus(`Session refreshed for @${refreshedSession.username} via ${refreshedSession.provider}.`);
+}
+
+function updateSessionStatus(session) {
+  if (!sessionStatus || !sessionRefreshBtn) {
+    return;
+  }
+
+  if (!session) {
+    sessionStatus.textContent = 'Session: not active';
+    sessionRefreshBtn.disabled = true;
+    return;
+  }
+
+  const expiresOn = new Date(session.expiresAt);
+  if (Date.now() >= session.expiresAt) {
+    sessionStatus.textContent = 'Session expired. Please sign in again.';
+    sessionRefreshBtn.disabled = true;
+    return;
+  }
+
+  sessionStatus.textContent = `Session active for @${session.username} via ${session.provider} until ${expiresOn.toLocaleTimeString()}.`;
+  sessionRefreshBtn.disabled = false;
+}
+
 
 // Username rules stay strict so IDs are clean and easy to mention in the community board.
 function normalizeUsername(value) {
@@ -160,6 +260,8 @@ function setAuthView(profile) {
   if (!profile) {
     guestView.hidden = false;
     accountView.hidden = true;
+    clearSession();
+    setOauthFlowStatus('Ready to authenticate with a social provider.');
   } else {
     guestView.hidden = true;
     accountView.hidden = false;
@@ -403,7 +505,10 @@ if (socialButtons.length) {
       // Existing provider account can sign in instantly without re-entering onboarding fields.
       if (socialProfile) {
         saveProfile(socialProfile);
+        const activeSession = createSession(socialProfile);
+        setOauthFlowStatus(`OAuth callback validated for ${providerLabel}. Session token issued.`);
         setAccountMessage(`Welcome back, @${socialProfile.username}. Signed in with ${providerLabel}.`);
+        updateSessionStatus(activeSession);
         renderThreads();
         return;
       }
@@ -423,6 +528,7 @@ if (socialButtons.length) {
       // Loading affordance makes tap/click feedback immediate and prevents accidental double-clicks.
       button.disabled = true;
       button.innerHTML = `<span aria-hidden="true">⏳</span><span>Connecting to ${providerLabel}...</span>`;
+      setOauthFlowStatus(`Starting OAuth authorization with ${providerLabel}...`);
 
       // Simulates OAuth callback latency without blocking the UI thread.
       window.setTimeout(() => {
@@ -437,7 +543,10 @@ if (socialButtons.length) {
         socialAccounts[providerKey] = profile;
         saveSocialAccounts(socialAccounts);
         saveProfile(profile);
+        const activeSession = createSession(profile);
+        setOauthFlowStatus(`OAuth callback validated for ${providerLabel}. Session token issued.`);
         setAccountMessage(`Connected ${providerLabel}. Welcome, @${enteredUsername}.`);
+        updateSessionStatus(activeSession);
         renderThreads();
 
         if (socialRegistrationForm) {
@@ -454,6 +563,7 @@ if (socialButtons.length) {
 if (logoutBtn) {
   logoutBtn.addEventListener('click', () => {
     localStorage.removeItem(ACCOUNT_STORAGE_KEY);
+    clearSession();
     setAuthView(null);
     setAccountMessage('You have logged out. See you soon.');
     renderThreads();
@@ -586,8 +696,31 @@ async function loadMerchCatalog() {
 }
 
 setAuthView(loadProfile());
+updateSessionStatus(loadSession());
 renderThreads();
 loadMerchCatalog();
+
+if (sessionRefreshBtn) {
+  sessionRefreshBtn.addEventListener('click', refreshSession);
+}
+
+// Keep session state fresh and fail-safe if it expires while user is browsing.
+window.setInterval(() => {
+  const activeSession = loadSession();
+
+  if (!activeSession) {
+    updateSessionStatus(null);
+    return;
+  }
+
+  if (Date.now() >= activeSession.expiresAt) {
+    clearSession();
+    setOauthFlowStatus('OAuth session expired. Please sign in again to continue posting.', true);
+    return;
+  }
+
+  updateSessionStatus(activeSession);
+}, 15000);
 
 // Automatically keeps the footer year current.
 const year = document.getElementById('year');

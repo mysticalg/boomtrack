@@ -502,6 +502,23 @@ input[type='email'] {
   color: #f3f5ff;
 }
 
+
+.oauth-status-card {
+  margin-top: 0.9rem;
+  border: 1px dashed var(--border);
+  border-radius: 0.75rem;
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.oauth-status-card h4 {
+  margin: 0 0 0.35rem;
+}
+
+.oauth-actions {
+  margin-top: 0.65rem;
+}
+
 .site-footer {
   border-top: 1px solid var(--border);
   padding: 1.4rem 0;
