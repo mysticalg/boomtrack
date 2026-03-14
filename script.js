@@ -490,6 +490,94 @@ const SOCIAL_PROVIDER_LABELS = {
   x: 'X.com',
 };
 
+// Release catalog scraped from https://www.youtube.com/@infinite-dimensions-1/releases.
+// We keep this local for a fast static site experience without runtime API dependencies.
+const RELEASES = [
+  { title: 'Endorphin Architecture (Extended Version)', youtubeUrl: 'https://www.youtube.com/watch?v=0lWQIkeIDuY&list=OLAK5uy_lYlIzgySScqrhoUoysXL3jpdJHqWv3CBY' },
+  { title: 'Fractal Funk of the Moving Mind', youtubeUrl: 'https://www.youtube.com/watch?v=MAik9vHz7pY&list=OLAK5uy_klIBP4_vmYYfrV-wJWypoBS0K8wo-LEdc' },
+  { title: 'The Awakening Protocol', youtubeUrl: 'https://www.youtube.com/watch?v=EpVMr1fZ07w&list=OLAK5uy_l0SKqLROjZbRRMA0qRWkkGXn2rdzYIrR4' },
+  { title: 'The Hidden Chrysalis of Light', youtubeUrl: 'https://www.youtube.com/watch?v=op9Rq1aKMzQ&list=OLAK5uy_lvy0qEPHXwrQ-NK7GmjufR8_k6wLMpZ4Y' },
+  { title: 'Synaptic Spiral Gateway', youtubeUrl: 'https://www.youtube.com/watch?v=8D5Gzh3D8-8&list=OLAK5uy_lDS3lPu9oOTDwC16_c2mU91Ghn9Axgt3Y' },
+  { title: 'Primordial Stirring', youtubeUrl: 'https://www.youtube.com/watch?v=Nv60bMcp2qE&list=OLAK5uy_nYvTfx67_CmLT5KKYSyjDEqjeOGUVHAhw' },
+  { title: 'Echoes Of The Electric Ocean', youtubeUrl: 'https://www.youtube.com/watch?v=Prg6jrx3V9w&list=OLAK5uy_kJ0rxGccRu_xsw0GqlNXxrE90MgUkuC24' },
+  { title: 'Fragments of Forever', youtubeUrl: 'https://www.youtube.com/watch?v=FAHg6OJ0Qes&list=OLAK5uy_kzxhaBkyO9opWDptnP8HoyRpV73aKR6rY' },
+  { title: 'Commando', youtubeUrl: 'https://www.youtube.com/watch?v=VEoz-5nCwq4&list=OLAK5uy_mWg7wdYht3xrAFzKwEyuZWhe1_fqMaZcc' },
+  { title: 'Echoes Of Tomorrow', youtubeUrl: 'https://www.youtube.com/watch?v=VQKVIv3W5Do&list=OLAK5uy_nWKOwbUeCtHahyo54b6QeLcpyaK7J9464' },
+  { title: 'Primordial Soup', youtubeUrl: 'https://www.youtube.com/watch?v=2ub9bpBWlkY&list=OLAK5uy_lmfZyaVcyOE_NKCThBnHv12f0_JdLK744&pp=0gcJCbQEOCosWNin' },
+  { title: 'Robots Attacked My Car', youtubeUrl: 'https://www.youtube.com/watch?v=L6HHtTO7m2w&list=OLAK5uy_l1wNjt5c_MSaX4q-kYZgIk6ul1fzGJxnc&pp=0gcJCbQEOCosWNin' },
+  { title: 'Drum N Space II', youtubeUrl: 'https://www.youtube.com/watch?v=Jup6BwiT3ss&list=OLAK5uy_l_BQj9Sz4zUdSIkFKYbllHPr1udiLaK7w&pp=0gcJCbQEOCosWNin' },
+  { title: 'Drum N Space', youtubeUrl: 'https://www.youtube.com/watch?v=C3PLrbsz8Mg&list=OLAK5uy_lwnZfSynzCZlpEpI99hrNGZ8I6nsbqnRk' },
+  { title: 'The Conspiracy', youtubeUrl: 'https://www.youtube.com/watch?v=zOkxFqYbVYQ&list=OLAK5uy_kw7Pr9qlwYzqJH6bP2eZ5Gogx9R-mON6o' },
+  { title: 'Cosmic Shift II', youtubeUrl: 'https://www.youtube.com/watch?v=6f-K_ewB_hU&list=OLAK5uy_nW_2jqX0CX9oxoh1Hk6yM_YCtrbyCGSPw' },
+  { title: 'Freeform Fantasy II', youtubeUrl: 'https://www.youtube.com/watch?v=35DsMgYpaxU&list=OLAK5uy_mvnH8PCgOHUbaTAGUXot-drbHHuYr3Afw' },
+  { title: 'Electro Psychedelics', youtubeUrl: 'https://www.youtube.com/watch?v=lIaCqYdJQxw&list=OLAK5uy_mCeFfhA3PqWB-n7xzgjukY9fDX9ObJhNc&pp=0gcJCbQEOCosWNin' },
+  { title: 'Freeform Fantasy', youtubeUrl: 'https://www.youtube.com/watch?v=xOmbBD0htCQ&list=OLAK5uy_l7odIQmck5cQF5eOV9JW0IJ6duW-tnmq0' },
+  { title: 'Cosmic Shift', youtubeUrl: 'https://www.youtube.com/watch?v=zstJVuhKrl0&list=OLAK5uy_mT0Kw2ll225fopUsGiCrR8Q7vRUwIaYdk' },
+  { title: 'Looking at the Stars', youtubeUrl: 'https://www.youtube.com/watch?v=2lBEwJCU9dw&list=OLAK5uy_n9m2f1kBoPMiPXssvB_80nXPpkU651L2Y' },
+  { title: 'Skinhead', youtubeUrl: 'https://www.youtube.com/watch?v=yLM9uaok7ok&list=OLAK5uy_nVDddwwRMSunelQUwanvuRFB6Qg5S6x1A' },
+  { title: 'Mr. Hardcore', youtubeUrl: 'https://www.youtube.com/watch?v=oiYOzpHzHL4&list=OLAK5uy_k2-N3-ATv-o6Aht_m9Ag8E-h-bOv829Qw' },
+  { title: 'Nuts in Yo', youtubeUrl: 'https://www.youtube.com/watch?v=3terweayj_w&list=OLAK5uy_kY1kQmJGdLS-GdQQGzUTcgfk4zBWPaUHw' },
+  { title: 'Love My Body', youtubeUrl: 'https://www.youtube.com/watch?v=rAgDg0eVBpU&list=OLAK5uy_nkqOZ5RGZzYmgDSHe31oiUCPl-1uqxMjE' },
+  { title: "Don't You Want Somebody", youtubeUrl: 'https://www.youtube.com/watch?v=LTSHq4kvWtE&list=OLAK5uy_n_ksKMPgStDX6RyWA-AJTQB0f_qXcDHpg' },
+  { title: 'Skate Or Die', youtubeUrl: 'https://www.youtube.com/watch?v=93NhKcf9usg&list=OLAK5uy_kQhIwiQZQF-Q4PgxYe3iwGYYf9-1P506k' },
+  { title: 'Polymetric Velocity of the Open Mind', youtubeUrl: 'https://www.youtube.com/watch?v=u_tE673zw3E&list=OLAK5uy_leT9WI2osOr6DqzSOXu5b41R00khF8CDM' },
+  { title: 'Electric Emergence', youtubeUrl: 'https://www.youtube.com/watch?v=Rm3uHgZcuKg&list=OLAK5uy_mK6443AmO6vgOPAkT_ssSUB7oPtzH3bEY' },
+  { title: 'Dancing Fractal Funk', youtubeUrl: 'https://www.youtube.com/watch?v=-yF9XbwJ8II&list=OLAK5uy_m5P6nwOlI4NbNQJPOIqp1EuEDHNYzWlD8' },
+  { title: 'Viridion Drift Cascade (Extended Version)', youtubeUrl: 'https://www.youtube.com/watch?v=amwCeH2Tjs4&list=OLAK5uy_kEtRh0-vuw5rGYg8sP6RLnUK-QUJonbas' },
+  { title: 'Distant Keys', youtubeUrl: 'https://www.youtube.com/watch?v=CTCpWH32PkA&list=OLAK5uy_lp0SKmy6VgdMT-SMP8reN5tBk5c8dS-xI' },
+  { title: 'Shimmering Fade', youtubeUrl: 'https://www.youtube.com/watch?v=c37VnhEKuoU&list=OLAK5uy_nfRgSxnSTG6PN35ZtYGdgPT_bnCv9bax4' },
+  { title: 'Urban Chords', youtubeUrl: 'https://www.youtube.com/watch?v=nZDf3dzCPK8&list=OLAK5uy_nerjOCsrqqMTtZMt5aXpgcwHrSP3MPlsQ' },
+  { title: 'Viral Dream Constructs', youtubeUrl: 'https://www.youtube.com/watch?v=pyCvJwD9v6Y&list=OLAK5uy_m-ODRWeoS3fobR68WWCL0qGHgRJ4voYdE' },
+  { title: 'Lunar Measure', youtubeUrl: 'https://www.youtube.com/watch?v=mr6QMZLPorE&list=OLAK5uy_ktsxfRfslVGfkwM4Lj7zGVRsjnnOfEs-0' },
+  { title: 'Late Night Decadence', youtubeUrl: 'https://www.youtube.com/watch?v=c5cvNc9IK8A&list=OLAK5uy_lRKBFJGEhexfJw6ObJiUnZ0lDhORAe6Ck' },
+  { title: 'Coast Sketch', youtubeUrl: 'https://www.youtube.com/watch?v=S3fm25hpf9M&list=OLAK5uy_nbaa-MjNiG87G_EnYuvkiO0Ts6ZgDyCiE' },
+  { title: 'Signal Drift', youtubeUrl: 'https://www.youtube.com/watch?v=wy3-tGXVsmQ&list=OLAK5uy_lLUU7FIyrzKcVU384jtOH6Q67769TRrG0&pp=0gcJCbQEOCosWNin' },
+  { title: 'Shifting Signatures', youtubeUrl: 'https://www.youtube.com/watch?v=27KN0GY1sa0&list=OLAK5uy_lqDoYgSTzRXyNEkp9sKTa8bbA0MVLeGy0' },
+  { title: 'Broken Silence', youtubeUrl: 'https://www.youtube.com/watch?v=D2En1PzYSTY&list=OLAK5uy_kt3sk8QfkraMYFzDHnS-XFp3GARnvlDcs' },
+  { title: 'Diffused Tones', youtubeUrl: 'https://www.youtube.com/watch?v=typ34ddJKRc&list=OLAK5uy_kiugaiw2CjfNaGp0j9x7QAtPrQ89KRLRY' },
+];
+
+const releaseGrid = document.getElementById('releaseGrid');
+const releaseSyncNote = document.getElementById('releaseSyncNote');
+
+function buildStoreSearchUrl(baseUrl, title) {
+  return `${baseUrl}${encodeURIComponent(`Infinite Dimensions ${title}`)}`;
+}
+
+function renderReleases() {
+  if (!releaseGrid || !releaseSyncNote) {
+    return;
+  }
+
+  releaseGrid.innerHTML = '';
+
+  RELEASES.forEach((release) => {
+    const card = document.createElement('article');
+    card.className = 'track-card release-card';
+
+    const title = document.createElement('h3');
+    title.textContent = `🎵 ${release.title}`;
+
+    const helper = document.createElement('p');
+    helper.className = 'microcopy';
+    helper.textContent = 'Open YouTube or jump to a store search link.';
+
+    const actions = document.createElement('div');
+    actions.className = 'release-actions';
+    actions.innerHTML = `
+      <a class="btn btn-ghost release-link" href="${release.youtubeUrl}" target="_blank" rel="noreferrer noopener" title="Open this release on YouTube">▶ YouTube</a>
+      <a class="btn btn-ghost release-link" href="${buildStoreSearchUrl('https://open.spotify.com/search/', release.title)}" target="_blank" rel="noreferrer noopener" title="Search this release on Spotify">🎧 Spotify</a>
+      <a class="btn btn-ghost release-link" href="${buildStoreSearchUrl('https://music.amazon.com/search/', release.title)}" target="_blank" rel="noreferrer noopener" title="Search this release on Amazon Music">🛒 Amazon</a>
+      <a class="btn btn-ghost release-link" href="${buildStoreSearchUrl('https://play.google.com/store/search?q=', `${release.title} music`)}&c=music_and_audio" target="_blank" rel="noreferrer noopener" title="Search this release on Google Play">📲 Google Play</a>
+    `;
+
+    card.append(title, helper, actions);
+    releaseGrid.appendChild(card);
+  });
+
+  releaseSyncNote.textContent = `✅ Loaded ${RELEASES.length} releases from your YouTube Releases page scrape.`;
+}
+
 if (socialButtons.length) {
   socialButtons.forEach((button) => {
     button.addEventListener('click', () => {
@@ -697,6 +785,7 @@ async function loadMerchCatalog() {
 
 setAuthView(loadProfile());
 updateSessionStatus(loadSession());
+renderReleases();
 renderThreads();
 loadMerchCatalog();
 

@@ -254,6 +254,28 @@ h2 {
   margin-top: 0.6rem;
 }
 
+.release-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.release-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.release-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.release-link {
+  min-height: 38px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.86rem;
+}
+
 .merch-status {
   margin-bottom: 1rem;
   color: var(--muted);
@@ -539,6 +561,7 @@ input[type='email'] {
 @media (max-width: 900px) {
   .hero-grid,
   .music-grid,
+  .release-grid,
   .two-col,
   .timeline,
   .merch-grid,

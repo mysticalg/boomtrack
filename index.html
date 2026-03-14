@@ -79,31 +79,12 @@
 
       <section class="section" id="music">
         <div class="container">
-          <h2>Featured Music</h2>
-          <p class="section-subtitle">Quick previews to keep the page fast and responsive.</p>
-          <div class="music-grid">
-            <article class="track-card">
-              <h3>🌌 Parallel Dawn</h3>
-              <p>Dream-wave synths and pulse-driven percussion.</p>
-              <audio controls preload="none" aria-label="Play Parallel Dawn preview">
-                <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_0fbeef8e95.mp3?filename=future-bass-117997.mp3" type="audio/mpeg" />
-              </audio>
-            </article>
-            <article class="track-card">
-              <h3>🪐 Drift Beyond Time</h3>
-              <p>Slow-burning ambient layers for deep focus.</p>
-              <audio controls preload="none" aria-label="Play Drift Beyond Time preview">
-                <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_8f72ec84da.mp3?filename=atmospheric-ambient-124841.mp3" type="audio/mpeg" />
-              </audio>
-            </article>
-            <article class="track-card">
-              <h3>⚡ Crystal Reactor</h3>
-              <p>Energetic cinematic build with bold low-end impact.</p>
-              <audio controls preload="none" aria-label="Play Crystal Reactor preview">
-                <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7b4800f2f8.mp3?filename=electronic-future-beat-117545.mp3" type="audio/mpeg" />
-              </audio>
-            </article>
-          </div>
+          <h2>Releases</h2>
+          <p class="section-subtitle">
+            Synced from your YouTube Releases page. Each card includes quick links to listen or search download stores.
+          </p>
+          <p class="microcopy" id="releaseSyncNote" aria-live="polite">🎧 Preparing release links…</p>
+          <div class="music-grid release-grid" id="releaseGrid" aria-label="Release catalog"></div>
         </div>
       </section>
 
