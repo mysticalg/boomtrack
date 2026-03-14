@@ -35,16 +35,18 @@ jobs:
 
       - name: Dry-run deployment plan
         env:
-          FTP_TARGET_DIR: ${{ secrets.FTP_TARGET_DIR }}
+          # Support repository/organization variables and lowercase names.
+          FTP_TARGET_DIR: ${{ secrets.FTP_TARGET_DIR || secrets.ftp_target_dir || vars.FTP_TARGET_DIR || vars.ftp_target_dir }}
         run: |
           python3 scripts/deploy_infinityfree.py --dry-run
 
       - name: Deploy via FTP
         env:
           # Keep credentials in GitHub secrets only.
-          FTP_HOST: ${{ secrets.FTP_HOST }}
-          FTP_USER: ${{ secrets.FTP_USER }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          FTP_TARGET_DIR: ${{ secrets.FTP_TARGET_DIR }}
+          # Read from uppercase/lowercase secret names; allow vars for non-sensitive fields.
+          FTP_HOST: ${{ secrets.FTP_HOST || secrets.ftp_host || vars.FTP_HOST || vars.ftp_host }}
+          FTP_USER: ${{ secrets.FTP_USER || secrets.ftp_user || vars.FTP_USER || vars.ftp_user }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD || secrets.ftp_password || vars.FTP_PASSWORD || vars.ftp_password }}
+          FTP_TARGET_DIR: ${{ secrets.FTP_TARGET_DIR || secrets.ftp_target_dir || vars.FTP_TARGET_DIR || vars.ftp_target_dir }}
         run: |
           python3 scripts/deploy_infinityfree.py
