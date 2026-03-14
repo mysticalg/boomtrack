@@ -342,21 +342,41 @@ if (loginForm) {
   });
 }
 
+// Human-friendly labels keep social messaging consistent across the app.
+const SOCIAL_PROVIDER_LABELS = {
+  google: 'Google',
+  facebook: 'Facebook',
+  github: 'GitHub',
+  x: 'X.com',
+};
+
 if (socialButtons.length) {
   socialButtons.forEach((button) => {
     button.addEventListener('click', () => {
-      const provider = button.dataset.provider;
-      const providerLabel = provider === 'x' ? 'x.com' : provider;
-      const profile = {
-        name: `${providerLabel} listener`,
-        email: `${provider}@example.com`,
-        provider: providerLabel,
-      };
+      const provider = (button.dataset.provider || '').toLowerCase();
+      const providerLabel = SOCIAL_PROVIDER_LABELS[provider] || 'Social provider';
+      const previousButtonMarkup = button.innerHTML;
 
-      // Demo-only behavior: this simulates successful OAuth callback.
-      saveProfile(profile);
-      setAccountMessage(`Connected successfully with ${providerLabel}.`);
-      renderThreads();
+      // Loading affordance makes tap/click feedback immediate and prevents accidental double-clicks.
+      button.disabled = true;
+      button.innerHTML = `<span aria-hidden="true">⏳</span><span>Connecting to ${providerLabel}...</span>`;
+
+      // Simulates OAuth callback latency without blocking the UI thread.
+      window.setTimeout(() => {
+        const profile = {
+          name: `${providerLabel} listener`,
+          email: `${provider || 'social'}@example.com`,
+          provider: providerLabel,
+        };
+
+        // Demo-only behavior: this simulates successful OAuth callback.
+        saveProfile(profile);
+        setAccountMessage(`Connected successfully with ${providerLabel}.`);
+        renderThreads();
+
+        button.disabled = false;
+        button.innerHTML = previousButtonMarkup;
+      }, 250);
     });
   });
 }
