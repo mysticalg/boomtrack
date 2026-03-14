@@ -36,6 +36,7 @@
         <nav id="siteNav" class="site-nav" aria-label="Main navigation">
           <a href="#music" title="Jump to latest music">🎵 Music</a>
           <a href="#merch" title="Shop Printful powered merch">🛍️ Merch</a>
+          <a href="#account" title="Register, login, or manage your profile">👤 My Account</a>
           <a href="#about" title="Learn about the project">✨ About</a>
           <a href="#events" title="See upcoming events">📅 Events</a>
           <a href="#newsletter" title="Join for exclusive updates">✉️ Join</a>
@@ -154,6 +155,108 @@
               <p class="muted">Global streaming • May 2026</p>
               <p>Launch of the next chapter in the Infinite Dimensions story arc.</p>
             </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alt" id="account">
+        <div class="container">
+          <h2>My Account</h2>
+          <p class="section-subtitle">
+            Create an account, sign in, or continue with social login providers.
+          </p>
+
+          <div class="account-grid">
+            <article class="account-card" aria-labelledby="accountAccessHeading">
+              <h3 id="accountAccessHeading">Access</h3>
+              <div class="account-tabs" role="tablist" aria-label="Choose register or login">
+                <button
+                  id="registerTab"
+                  class="tab-btn active"
+                  type="button"
+                  role="tab"
+                  aria-controls="registerPanel"
+                  aria-selected="true"
+                  title="Open registration form"
+                >
+                  📝 Register
+                </button>
+                <button
+                  id="loginTab"
+                  class="tab-btn"
+                  type="button"
+                  role="tab"
+                  aria-controls="loginPanel"
+                  aria-selected="false"
+                  title="Open login form"
+                >
+                  🔐 Login
+                </button>
+              </div>
+
+              <div id="registerPanel" class="tab-panel active" role="tabpanel" aria-labelledby="registerTab">
+                <form id="registerForm" class="account-form" novalidate>
+                  <label for="registerName">Display name</label>
+                  <input id="registerName" name="displayName" type="text" placeholder="Mystical listener" required title="Choose a display name" />
+
+                  <label for="registerEmail">Email</label>
+                  <input id="registerEmail" name="email" type="email" placeholder="you@example.com" required title="Enter your email" />
+
+                  <label for="registerPassword">Password</label>
+                  <input id="registerPassword" name="password" type="password" minlength="8" required placeholder="At least 8 characters" title="Use at least 8 characters" />
+
+                  <button class="btn btn-primary" type="submit" title="Create your account">✨ Create account</button>
+                </form>
+              </div>
+
+              <div id="loginPanel" class="tab-panel" role="tabpanel" aria-labelledby="loginTab" hidden>
+                <form id="loginForm" class="account-form" novalidate>
+                  <label for="loginEmail">Email</label>
+                  <input id="loginEmail" name="email" type="email" placeholder="you@example.com" required title="Enter your account email" />
+
+                  <label for="loginPassword">Password</label>
+                  <input id="loginPassword" name="password" type="password" required placeholder="Your password" title="Enter your account password" />
+
+                  <button class="btn btn-primary" type="submit" title="Sign into your account">🚀 Sign in</button>
+                </form>
+              </div>
+
+              <div class="social-auth" aria-label="Social sign in options">
+                <p class="microcopy">Or continue with:</p>
+                <div class="social-row">
+                  <button class="btn btn-ghost social-btn" type="button" data-provider="google" title="Register or login with Google">
+                    🟢 Google
+                  </button>
+                  <button class="btn btn-ghost social-btn" type="button" data-provider="facebook" title="Register or login with Facebook">
+                    🔵 Facebook
+                  </button>
+                  <button class="btn btn-ghost social-btn" type="button" data-provider="x" title="Register or login with X.com">
+                    ⚫ X.com
+                  </button>
+                </div>
+              </div>
+
+              <p id="accountMessage" class="account-message" aria-live="polite"></p>
+            </article>
+
+            <aside class="account-card" aria-labelledby="accountOverviewHeading">
+              <h3 id="accountOverviewHeading">Overview</h3>
+              <div id="guestView">
+                <p class="muted">You are browsing as a guest.</p>
+                <ul class="feature-list">
+                  <li>🎯 Save release reminders</li>
+                  <li>🛒 Sync merch wishlists</li>
+                  <li>💬 Get insider updates</li>
+                </ul>
+              </div>
+
+              <div id="accountView" hidden>
+                <p><strong id="accountName">-</strong></p>
+                <p class="muted">Signed in via <span id="accountProvider">email</span></p>
+                <p class="microcopy" id="accountEmail">-</p>
+                <button id="logoutBtn" class="btn btn-ghost" type="button" title="Log out of your account">↩ Log out</button>
+              </div>
+            </aside>
           </div>
         </div>
       </section>
