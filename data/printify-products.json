@@ -1,0 +1,33 @@
+{
+  "last_synced": "sample data",
+  "shop_id": "demo-shop",
+  "products": [
+    {
+      "id": "demo-hoodie",
+      "title": "Infinite Dimensions Nebula Hoodie",
+      "description": "Heavyweight unisex hoodie with cosmic nebula print.",
+      "image": "https://images.printify.com/mockup/hoodie-nebula.jpg",
+      "product_url": "https://printify.com/app/products/demo-hoodie",
+      "price_display": "From $54.99",
+      "is_visible": true
+    },
+    {
+      "id": "demo-tee",
+      "title": "Crystal Reactor Tour Tee",
+      "description": "Soft cotton t-shirt with front/back artwork inspired by the single.",
+      "image": "https://images.printify.com/mockup/tee-reactor.jpg",
+      "product_url": "https://printify.com/app/products/demo-tee",
+      "price_display": "From $29.99",
+      "is_visible": true
+    },
+    {
+      "id": "demo-mug",
+      "title": "Starlight Engine Gradient Mug",
+      "description": "11oz ceramic mug featuring the Infinite Dimensions sigil.",
+      "image": "https://images.printify.com/mockup/mug-starlight.jpg",
+      "product_url": "https://printify.com/app/products/demo-mug",
+      "price_display": "From $18.99",
+      "is_visible": true
+    }
+  ]
+}
