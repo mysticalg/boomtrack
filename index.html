@@ -39,7 +39,6 @@
         </button>
         <nav id="siteNav" class="site-nav" aria-label="Main navigation">
           <a href="#music" title="Jump to latest music">🎵 Music</a>
-          <a href="#merch" title="Shop Printful powered merch">🛍️ Merch</a>
           <a href="#news" title="Read recent project blog updates">📰 News</a>
           <a href="#board" title="View and join the community board">💬 Community</a>
           <a href="#account" title="Register, login, or manage your profile">👤 My Account</a>
@@ -88,23 +87,6 @@
         </div>
       </section>
 
-      <section class="section alt" id="merch">
-        <div class="container">
-          <h2>Official Merch</h2>
-          <p class="section-subtitle">
-            Printful-connected product picks refreshed from the API.
-            <span id="merchLastUpdated" class="microcopy" title="Last sync timestamp">Sync pending…</span>
-          </p>
-          <div id="merchStatus" class="merch-status" role="status" aria-live="polite">
-            🛰️ Loading products from catalog…
-          </div>
-          <div id="merchGrid" class="merch-grid" aria-label="Product catalog"></div>
-          <p class="microcopy">
-            Admin tip: run <code>python scripts/sync_printful_products.py --help</code> to refresh this grid with your live Printful shop.
-          </p>
-        </div>
-      </section>
-
       <section class="section" id="news">
         <div class="container">
           <h2>Project News</h2>
@@ -143,7 +125,7 @@
                 name="message"
                 rows="4"
                 maxlength="500"
-                placeholder="Share your thoughts on recent tracks, live sessions, or merch ideas…"
+                placeholder="Share your thoughts on recent tracks, live sessions, or upcoming ideas…"
                 title="Login required to post"
               ></textarea>
               <div class="board-form-actions">
@@ -350,7 +332,7 @@
                 <p class="muted">You are browsing as a guest.</p>
                 <ul class="feature-list">
                   <li>🎯 Save release reminders</li>
-                  <li>🛒 Sync merch wishlists</li>
+                  <li>📌 Save favorite releases</li>
                   <li>💬 Participate in the message board</li>
                 </ul>
               </div>
