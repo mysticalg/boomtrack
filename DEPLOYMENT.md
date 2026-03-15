@@ -82,3 +82,14 @@ Go to **GitHub → Repository → Settings → Secrets and variables → Actions
 ```bash
 curl -I https://mysticalg.kesug.com
 ```
+
+
+## Browser admin (no SSH)
+
+If you cannot use SSH, you can trigger sync/deploy from `admin.php`.
+
+1. Edit `data/admin-config.php` and set `password_hash` to a `password_hash(...)` value.
+2. Open `https://your-domain/admin.php` and sign in.
+3. Run **Deployment dry-run**, then **Sync Printful products**, then **Deploy to live site**.
+
+> Security tip: keep a strong password and do not share the admin URL publicly.
