@@ -32,7 +32,11 @@ function firstNonEmptyEnv(string ...$names): ?string
  */
 function collectFiles(string $siteRoot): array
 {
+    // Keep deployment scoped to website/runtime files and exclude local tooling/docs.
+    // This also ensures newly added .php files are picked up automatically.
     $included = ['index.html', 'styles.css', 'script.js', 'data/printful-products.json'];
+    $excludedTopLevel = ['.git', '.github', 'scripts'];
+    $excludedFiles = ['README.md', 'DEPLOYMENT.md'];
     $files = [];
 
     foreach ($included as $name) {
@@ -53,6 +57,35 @@ function collectFiles(string $siteRoot): array
         }
     }
 
+    // Recursively include first-class site files such as .php pages/templates.
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($siteRoot, FilesystemIterator::SKIP_DOTS)
+    );
+
+    foreach ($iterator as $fileInfo) {
+        if (!$fileInfo->isFile()) {
+            continue;
+        }
+
+        $absolutePath = $fileInfo->getPathname();
+        $relative = relativePath($absolutePath, $siteRoot);
+        $parts = explode('/', $relative);
+
+        if ($parts === [] || in_array($parts[0], $excludedTopLevel, true)) {
+            continue;
+        }
+
+        if (in_array($relative, $excludedFiles, true)) {
+            continue;
+        }
+
+        $extension = strtolower(pathinfo($relative, PATHINFO_EXTENSION));
+        if ($extension === 'php' || $relative === '.htaccess') {
+            $files[] = $absolutePath;
+        }
+    }
+
+    $files = array_values(array_unique($files));
     sort($files);
     return $files;
 }
