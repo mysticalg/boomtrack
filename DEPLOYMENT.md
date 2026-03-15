@@ -1,7 +1,7 @@
 # Deploying Infinite Dimensions to InfinityFree
 
 This project is a static website (`index.html`, `styles.css`, `script.js`).
-Use the included deployment helper for a fast, repeatable FTP upload.
+Use the included PHP deployment helper for a fast, repeatable FTP upload.
 
 ## 1) Configure FTP credentials (local/manual deploy)
 
@@ -21,7 +21,7 @@ The merch section is powered by `data/printful-products.json` so the site stays 
 
 ```bash
 export PRINTFUL_API_KEY='YOUR_PRINTFUL_API_KEY'
-python3 scripts/sync_printful_products.py
+php scripts/sync_printful_products.php
 ```
 
 The script reads your synced store products from Printful and writes a static JSON catalog.
@@ -30,13 +30,13 @@ You can also place `PRINTFUL_API_KEY=...` in a local `.env` file for convenience
 ## 3) Preview upload plan (safe)
 
 ```bash
-python3 scripts/deploy_infinityfree.py --dry-run
+php scripts/deploy_infinityfree.php --dry-run
 ```
 
 ## 4) Deploy to live site (manual)
 
 ```bash
-python3 scripts/deploy_infinityfree.py
+php scripts/deploy_infinityfree.php
 ```
 
 ## 5) Verify deployment
@@ -80,3 +80,14 @@ Go to **GitHub → Repository → Settings → Secrets and variables → Actions
 ```bash
 curl -I https://mysticalg.kesug.com
 ```
+
+
+## Browser admin (no SSH)
+
+If you cannot use SSH, you can trigger sync/deploy from `admin.php`.
+
+1. Edit `data/admin-config.php` and set `password_hash` to a `password_hash(...)` value.
+2. Open `https://your-domain/admin.php` and sign in.
+3. Run **Deployment dry-run**, then **Sync Printful products**, then **Deploy to live site**.
+
+> Security tip: keep a strong password and do not share the admin URL publicly.
