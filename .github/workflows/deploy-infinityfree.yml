@@ -9,10 +9,11 @@ on:
       - 'index.html'
       - 'styles.css'
       - 'script.js'
+      # Re-deploy when site-level PHP pages/templates change.
+      - '**/*.php'
+      - '.htaccess'
       - 'data/printful-products.json'
       - 'assets/**'
-      - 'scripts/deploy_infinityfree.php'
-      - 'scripts/sync_printful_products.php'
       - '.github/workflows/deploy-infinityfree.yml'
   # Manual trigger for urgent fixes or first-time validation.
   workflow_dispatch:

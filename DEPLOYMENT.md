@@ -1,7 +1,9 @@
 # Deploying Infinite Dimensions to InfinityFree
 
-This project is a static website (`index.html`, `styles.css`, `script.js`).
+This project is primarily static (`index.html`, `styles.css`, `script.js`) and can also include PHP files.
 Use the included PHP deployment helper for a fast, repeatable FTP upload.
+
+The deploy script uploads core static files, `assets/`, and any site PHP files (`*.php`, plus `.htaccess`) outside of the local `scripts/` tooling folder.
 
 ## 1) Configure FTP credentials (local/manual deploy)
 

@@ -70,6 +70,10 @@ const SOCIAL_ACCOUNT_STORAGE_KEY = 'id_social_accounts';
 const SESSION_STORAGE_KEY = 'id_social_session';
 const SESSION_DURATION_MS = 30 * 60 * 1000;
 
+// Temporary testing bypass: when enabled, message board posting/replies do not require login.
+// Set this back to false when production auth is ready so community actions are protected again.
+const INSECURE_ADMIN_TEST_MODE = true;
+
 function setOauthFlowStatus(message, isError = false) {
   if (!oauthFlowStatus) {
     return;
@@ -301,11 +305,13 @@ function updateBoardPostingState(profile) {
     return;
   }
 
-  const isLoggedIn = Boolean(profile);
+  const isLoggedIn = Boolean(profile) || INSECURE_ADMIN_TEST_MODE;
   boardMessage.disabled = !isLoggedIn;
   boardSubmit.disabled = !isLoggedIn;
   boardHint.textContent = isLoggedIn
-    ? '✅ You are logged in. You can post new threads and replies.'
+    ? INSECURE_ADMIN_TEST_MODE
+      ? '⚠️ Test mode is on: posting and replies are currently open to everyone.'
+      : '✅ You are logged in. You can post new threads and replies.'
     : '💡 Login in My Account to publish posts and replies.';
 }
 
@@ -360,8 +366,9 @@ function renderThreads() {
       replyButton.type = 'button';
       replyButton.className = 'btn btn-ghost thread-reply-btn';
       replyButton.textContent = '↩ Reply';
-      replyButton.title = profile ? 'Reply to this thread' : 'Login required to reply';
-      replyButton.disabled = !profile;
+      const canReply = Boolean(profile) || INSECURE_ADMIN_TEST_MODE;
+      replyButton.title = canReply ? 'Reply to this thread' : 'Login required to reply';
+      replyButton.disabled = !canReply;
 
       const replyForm = document.createElement('form');
       replyForm.className = 'reply-form';
@@ -395,7 +402,7 @@ function renderThreads() {
         const formData = new FormData(replyForm);
         const replyText = (formData.get('reply') || '').toString().trim();
 
-        if (!activeProfile) {
+        if (!activeProfile && !INSECURE_ADMIN_TEST_MODE) {
           setBoardStatus('Please log in before posting a reply.', true);
           return;
         }
@@ -415,7 +422,8 @@ function renderThreads() {
 
         targetThread.replies.push({
           id: `reply-${Date.now()}`,
-          author: `@${activeProfile.username || activeProfile.name}`,
+          // In testing bypass mode, guest replies are labeled clearly for moderation cleanup later.
+          author: activeProfile ? `@${activeProfile.username || activeProfile.name}` : '@guest-tester',
           message: replyText,
           createdAt: new Date().toISOString(),
         });
@@ -664,7 +672,7 @@ if (boardForm && boardMessage) {
     const profile = loadProfile();
     const message = boardMessage.value.trim();
 
-    if (!profile) {
+    if (!profile && !INSECURE_ADMIN_TEST_MODE) {
       setBoardStatus('Please log in before posting.', true);
       return;
     }
@@ -677,7 +685,8 @@ if (boardForm && boardMessage) {
     const threads = loadThreads();
     threads.push({
       id: `thread-${Date.now()}`,
-      author: `@${profile.username || profile.name}`,
+      // In testing bypass mode, guest posts are labeled clearly for moderation cleanup later.
+      author: profile ? `@${profile.username || profile.name}` : '@guest-tester',
       message,
       createdAt: new Date().toISOString(),
       replies: [],
