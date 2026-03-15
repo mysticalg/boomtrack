@@ -648,6 +648,70 @@ function queueArtworkHydration(img, title, artworkCache) {
     });
 }
 
+
+function buildYouTubeEmbedUrl(youtubeUrl) {
+  try {
+    const parsed = new URL(youtubeUrl);
+    const videoId = parsed.searchParams.get('v');
+
+    if (!videoId) {
+      return '';
+    }
+
+    return `https://www.youtube-nocookie.com/embed/${videoId}`;
+  } catch (error) {
+    console.warn('Unable to parse YouTube URL for release embed', error);
+    return '';
+  }
+}
+
+function createEmbeddedStreamPanel(release) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'release-stream-panel';
+
+  const embedUrl = buildYouTubeEmbedUrl(release.youtubeUrl);
+  if (!embedUrl) {
+    wrapper.textContent = 'Embedded stream unavailable for this release. Use the YouTube link instead.';
+    return { wrapper, toggleButton: null };
+  }
+
+  const toggleButton = document.createElement('button');
+  toggleButton.type = 'button';
+  toggleButton.className = 'btn btn-ghost release-stream-toggle';
+  toggleButton.innerHTML = '<span aria-hidden="true">▶️</span><span>Play here</span>';
+  toggleButton.title = 'Load inline stream player for this release.';
+  toggleButton.setAttribute('aria-expanded', 'false');
+
+  const iframe = document.createElement('iframe');
+  iframe.className = 'release-stream-frame';
+  iframe.title = `${release.title} embedded stream`;
+  iframe.loading = 'lazy';
+  iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+  iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+  iframe.allowFullscreen = true;
+
+  let isLoaded = false;
+  let isExpanded = false;
+
+  // Embeds are loaded on demand so dozens of releases do not block the initial page load.
+  toggleButton.addEventListener('click', () => {
+    isExpanded = !isExpanded;
+    wrapper.classList.toggle('show', isExpanded);
+    toggleButton.setAttribute('aria-expanded', String(isExpanded));
+    toggleButton.innerHTML = isExpanded
+      ? '<span aria-hidden="true">⏸️</span><span>Hide player</span>'
+      : '<span aria-hidden="true">▶️</span><span>Play here</span>';
+
+    if (!isLoaded) {
+      iframe.src = embedUrl;
+      wrapper.appendChild(iframe);
+      isLoaded = true;
+    }
+  });
+
+  return { wrapper, toggleButton };
+}
+
 function renderReleases() {
   if (!releaseGrid || !releaseSyncNote) {
     return;
@@ -673,7 +737,7 @@ function renderReleases() {
 
     const helper = document.createElement('p');
     helper.className = 'microcopy';
-    helper.textContent = 'Artwork auto-loads from remote catalog metadata. Use links to verify on each platform.';
+    helper.textContent = 'Artwork auto-loads remotely. Use Play here for an embedded stream or jump to platform links.';
 
     const actions = document.createElement('div');
     actions.className = 'release-actions';
@@ -684,7 +748,12 @@ function renderReleases() {
       <a class="btn btn-ghost release-link" href="${buildStoreSearchUrl('https://play.google.com/store/search?q=', `${release.title} music`)}&c=music_and_audio" target="_blank" rel="noreferrer noopener" title="Search this release on Google Play">📲 Google Play</a>
     `;
 
-    card.append(artwork, title, helper, actions);
+    const streamPanel = createEmbeddedStreamPanel(release);
+    if (streamPanel.toggleButton) {
+      actions.prepend(streamPanel.toggleButton);
+    }
+
+    card.append(artwork, title, helper, actions, streamPanel.wrapper);
     releaseGrid.appendChild(card);
 
     queueArtworkHydration(artwork, release.title, artworkCache);

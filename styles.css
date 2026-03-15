@@ -278,6 +278,32 @@ h2 {
   gap: 0.45rem;
 }
 
+
+.release-stream-toggle {
+  flex: 1 1 100%;
+}
+
+.release-stream-panel {
+  display: none;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.6rem;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.release-stream-panel.show {
+  display: block;
+}
+
+.release-stream-frame {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 0.55rem;
+}
+
 .release-link {
   min-height: 38px;
   padding: 0.4rem 0.75rem;
