@@ -527,11 +527,15 @@ const SOCIAL_PROVIDER_LABELS = {
   x: 'X.com',
 };
 
-// Release catalog scraped from https://www.youtube.com/@infinite-dimensions-1/releases.
-// We keep this local for a fast static site experience without runtime API dependencies.
+// Release catalog stays local for a fast static site experience without runtime API dependencies.
+// Add a spotifyUrl when you have one so cards prefer Spotify embeds over YouTube.
 const RELEASES = [
   { title: 'Endorphin Architecture (Extended Version)', youtubeUrl: 'https://www.youtube.com/watch?v=0lWQIkeIDuY&list=OLAK5uy_lYlIzgySScqrhoUoysXL3jpdJHqWv3CBY' },
-  { title: 'Fractal Funk of the Moving Mind', youtubeUrl: 'https://www.youtube.com/watch?v=MAik9vHz7pY&list=OLAK5uy_klIBP4_vmYYfrV-wJWypoBS0K8wo-LEdc' },
+  {
+    title: 'Fractal Funk of the Moving Mind',
+    youtubeUrl: 'https://www.youtube.com/watch?v=MAik9vHz7pY&list=OLAK5uy_klIBP4_vmYYfrV-wJWypoBS0K8wo-LEdc',
+    spotifyUrl: 'https://open.spotify.com/album/5yMJm9Kp9svgyUyLPUGaFG?si=vAOoqhN8R_D2zVYsohTsUw',
+  },
   { title: 'The Awakening Protocol', youtubeUrl: 'https://www.youtube.com/watch?v=EpVMr1fZ07w&list=OLAK5uy_l0SKqLROjZbRRMA0qRWkkGXn2rdzYIrR4' },
   { title: 'The Hidden Chrysalis of Light', youtubeUrl: 'https://www.youtube.com/watch?v=op9Rq1aKMzQ&list=OLAK5uy_lvy0qEPHXwrQ-NK7GmjufR8_k6wLMpZ4Y' },
   { title: 'Synaptic Spiral Gateway', youtubeUrl: 'https://www.youtube.com/watch?v=8D5Gzh3D8-8&list=OLAK5uy_lDS3lPu9oOTDwC16_c2mU91Ghn9Axgt3Y' },
@@ -665,21 +669,72 @@ function buildYouTubeEmbedUrl(youtubeUrl) {
   }
 }
 
+function buildSpotifyEmbedUrl(spotifyUrl) {
+  if (!spotifyUrl) {
+    return '';
+  }
+
+  try {
+    const parsed = new URL(spotifyUrl);
+    const segments = parsed.pathname.split('/').filter(Boolean);
+    const [resourceType, resourceId] = segments;
+
+    // Spotify embeds support albums, tracks, playlists, artists, episodes, and shows.
+    const supportedTypes = new Set(['album', 'track', 'playlist', 'artist', 'episode', 'show']);
+    if (!supportedTypes.has(resourceType) || !resourceId) {
+      return '';
+    }
+
+    return `https://open.spotify.com/embed/${resourceType}/${resourceId}`;
+  } catch (error) {
+    console.warn('Unable to parse Spotify URL for release embed', error);
+    return '';
+  }
+}
+
+function buildEmbeddedStreamConfig(release) {
+  const spotifyEmbedUrl = buildSpotifyEmbedUrl(release.spotifyUrl);
+  if (spotifyEmbedUrl) {
+    return {
+      embedUrl: spotifyEmbedUrl,
+      provider: 'spotify',
+      playLabel: 'Play on Spotify',
+      hideLabel: 'Hide Spotify player',
+      icon: '🎧',
+      iframeAllow: 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture',
+    };
+  }
+
+  const youtubeEmbedUrl = buildYouTubeEmbedUrl(release.youtubeUrl);
+  if (youtubeEmbedUrl) {
+    return {
+      embedUrl: youtubeEmbedUrl,
+      provider: 'youtube',
+      playLabel: 'Play on YouTube',
+      hideLabel: 'Hide YouTube player',
+      icon: '▶️',
+      iframeAllow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
+    };
+  }
+
+  return null;
+}
+
 function createEmbeddedStreamPanel(release) {
   const wrapper = document.createElement('div');
   wrapper.className = 'release-stream-panel';
 
-  const embedUrl = buildYouTubeEmbedUrl(release.youtubeUrl);
-  if (!embedUrl) {
-    wrapper.textContent = 'Embedded stream unavailable for this release. Use the YouTube link instead.';
+  const streamConfig = buildEmbeddedStreamConfig(release);
+  if (!streamConfig) {
+    wrapper.textContent = 'Embedded stream unavailable for this release. Use store links instead.';
     return { wrapper, toggleButton: null };
   }
 
   const toggleButton = document.createElement('button');
   toggleButton.type = 'button';
   toggleButton.className = 'btn btn-ghost release-stream-toggle';
-  toggleButton.innerHTML = '<span aria-hidden="true">▶️</span><span>Play here</span>';
-  toggleButton.title = 'Load inline stream player for this release.';
+  toggleButton.innerHTML = `<span aria-hidden="true">${streamConfig.icon}</span><span>${streamConfig.playLabel}</span>`;
+  toggleButton.title = `Load inline ${streamConfig.provider} player for this release.`;
   toggleButton.setAttribute('aria-expanded', 'false');
 
   const iframe = document.createElement('iframe');
@@ -687,7 +742,7 @@ function createEmbeddedStreamPanel(release) {
   iframe.title = `${release.title} embedded stream`;
   iframe.loading = 'lazy';
   iframe.referrerPolicy = 'strict-origin-when-cross-origin';
-  iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+  iframe.allow = streamConfig.iframeAllow;
   iframe.allowFullscreen = true;
 
   let isLoaded = false;
@@ -699,11 +754,11 @@ function createEmbeddedStreamPanel(release) {
     wrapper.classList.toggle('show', isExpanded);
     toggleButton.setAttribute('aria-expanded', String(isExpanded));
     toggleButton.innerHTML = isExpanded
-      ? '<span aria-hidden="true">⏸️</span><span>Hide player</span>'
-      : '<span aria-hidden="true">▶️</span><span>Play here</span>';
+      ? `<span aria-hidden="true">⏸️</span><span>${streamConfig.hideLabel}</span>`
+      : `<span aria-hidden="true">${streamConfig.icon}</span><span>${streamConfig.playLabel}</span>`;
 
     if (!isLoaded) {
-      iframe.src = embedUrl;
+      iframe.src = streamConfig.embedUrl;
       wrapper.appendChild(iframe);
       isLoaded = true;
     }
@@ -737,7 +792,7 @@ function renderReleases() {
 
     const helper = document.createElement('p');
     helper.className = 'microcopy';
-    helper.textContent = 'Artwork auto-loads remotely. Use Play here for an embedded stream or jump to platform links.';
+    helper.textContent = 'Artwork auto-loads remotely. Use the embedded Spotify player when available, or jump to platform links.';
 
     const actions = document.createElement('div');
     actions.className = 'release-actions';
@@ -759,7 +814,7 @@ function renderReleases() {
     queueArtworkHydration(artwork, release.title, artworkCache);
   });
 
-  releaseSyncNote.textContent = `✅ Loaded ${RELEASES.length} releases from your YouTube Releases page scrape.`;
+  releaseSyncNote.textContent = `✅ Loaded ${RELEASES.length} releases from your local catalog list.`;
 }
 
 if (socialButtons.length) {
