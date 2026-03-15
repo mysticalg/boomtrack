@@ -528,7 +528,7 @@ const SOCIAL_PROVIDER_LABELS = {
 };
 
 // Release catalog stays local for a fast static site experience without runtime API dependencies.
-// Add a spotifyUrl when you have one so cards prefer Spotify embeds over YouTube.
+// Add a spotifyUrl when available so cards deep-link directly to the exact release.
 const RELEASES = [
   { title: 'Endorphin Architecture (Extended Version)', youtubeUrl: 'https://www.youtube.com/watch?v=0lWQIkeIDuY&list=OLAK5uy_lYlIzgySScqrhoUoysXL3jpdJHqWv3CBY' },
   {
@@ -653,20 +653,9 @@ function queueArtworkHydration(img, title, artworkCache) {
 }
 
 
-function buildYouTubeEmbedUrl(youtubeUrl) {
-  try {
-    const parsed = new URL(youtubeUrl);
-    const videoId = parsed.searchParams.get('v');
-
-    if (!videoId) {
-      return '';
-    }
-
-    return `https://www.youtube-nocookie.com/embed/${videoId}`;
-  } catch (error) {
-    console.warn('Unable to parse YouTube URL for release embed', error);
-    return '';
-  }
+function buildSpotifySearchUrl(title) {
+  const query = encodeURIComponent(title.trim());
+  return `https://open.spotify.com/search/${query}`;
 }
 
 function buildSpotifyEmbedUrl(spotifyUrl) {
@@ -693,31 +682,18 @@ function buildSpotifyEmbedUrl(spotifyUrl) {
 }
 
 function buildEmbeddedStreamConfig(release) {
-  const spotifyEmbedUrl = buildSpotifyEmbedUrl(release.spotifyUrl);
-  if (spotifyEmbedUrl) {
-    return {
-      embedUrl: spotifyEmbedUrl,
-      provider: 'spotify',
-      playLabel: 'Play on Spotify',
-      hideLabel: 'Hide Spotify player',
-      icon: '🎧',
-      iframeAllow: 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture',
-    };
-  }
+  // Spotify is now the canonical inline player. If an exact URI is missing, fall back to a Spotify search embed.
+  const directSpotifyEmbedUrl = buildSpotifyEmbedUrl(release.spotifyUrl);
+  const searchSpotifyEmbedUrl = `https://open.spotify.com/embed/search/${encodeURIComponent(release.title.trim())}`;
 
-  const youtubeEmbedUrl = buildYouTubeEmbedUrl(release.youtubeUrl);
-  if (youtubeEmbedUrl) {
-    return {
-      embedUrl: youtubeEmbedUrl,
-      provider: 'youtube',
-      playLabel: 'Play on YouTube',
-      hideLabel: 'Hide YouTube player',
-      icon: '▶️',
-      iframeAllow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
-    };
-  }
-
-  return null;
+  return {
+    embedUrl: directSpotifyEmbedUrl || searchSpotifyEmbedUrl,
+    provider: 'spotify',
+    playLabel: directSpotifyEmbedUrl ? 'Play on Spotify' : 'Search on Spotify',
+    hideLabel: 'Hide Spotify player',
+    icon: '🎧',
+    iframeAllow: 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture',
+  };
 }
 
 function createEmbeddedStreamPanel(release) {
@@ -792,13 +768,16 @@ function renderReleases() {
 
     const helper = document.createElement('p');
     helper.className = 'microcopy';
-    helper.textContent = 'Artwork auto-loads remotely. Use the embedded Spotify player when available, or jump to platform links.';
+    helper.textContent = 'Artwork auto-loads remotely. Use the embedded Spotify player, or jump to platform links.';
 
     const actions = document.createElement('div');
     actions.className = 'release-actions';
+    const spotifyUrl = release.spotifyUrl || buildSpotifySearchUrl(release.title);
+    const spotifyButtonLabel = release.spotifyUrl ? '🎧 Spotify' : '🎧 Spotify Search';
+    const spotifyButtonTitle = release.spotifyUrl ? 'Open this release on Spotify' : 'Search this release on Spotify';
+
     actions.innerHTML = `
-      <a class="btn btn-ghost release-link" href="${release.youtubeUrl}" target="_blank" rel="noreferrer noopener" title="Open this release on YouTube">▶ YouTube</a>
-      <a class="btn btn-ghost release-link" href="${buildStoreSearchUrl('https://open.spotify.com/search/', release.title)}" target="_blank" rel="noreferrer noopener" title="Search this release on Spotify">🎧 Spotify</a>
+      <a class="btn btn-ghost release-link" href="${spotifyUrl}" target="_blank" rel="noreferrer noopener" title="${spotifyButtonTitle}">${spotifyButtonLabel}</a>
       <a class="btn btn-ghost release-link" href="${buildStoreSearchUrl('https://music.amazon.com/search/', release.title)}" target="_blank" rel="noreferrer noopener" title="Search this release on Amazon Music">🛒 Amazon</a>
       <a class="btn btn-ghost release-link" href="${buildStoreSearchUrl('https://play.google.com/store/search?q=', `${release.title} music`)}&c=music_and_audio" target="_blank" rel="noreferrer noopener" title="Search this release on Google Play">📲 Google Play</a>
     `;
