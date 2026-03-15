@@ -576,9 +576,76 @@ const RELEASES = [
 
 const releaseGrid = document.getElementById('releaseGrid');
 const releaseSyncNote = document.getElementById('releaseSyncNote');
+const RELEASE_ARTWORK_CACHE_KEY = 'id_release_artwork_cache_v1';
+const RELEASE_ARTWORK_FALLBACK_SVG = `data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 360"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8e7dff"/><stop offset="100%" stop-color="#41d8f5"/></linearGradient></defs><rect width="360" height="360" fill="#111327"/><rect x="14" y="14" width="332" height="332" rx="24" fill="url(#g)" fill-opacity="0.22" stroke="#2a2f56" stroke-width="4"/><g fill="#f3f5ff" font-family="Inter,Arial,sans-serif" text-anchor="middle"><text x="180" y="164" font-size="34">🎵</text><text x="180" y="196" font-size="20">Infinite Dimensions</text><text x="180" y="226" font-size="15" fill="#b4bad8">Artwork Loading</text></g></svg>`,
+)}`;
 
 function buildStoreSearchUrl(baseUrl, title) {
   return `${baseUrl}${encodeURIComponent(`Infinite Dimensions ${title}`)}`;
+}
+
+function loadArtworkCache() {
+  const raw = safeStorageGet(RELEASE_ARTWORK_CACHE_KEY);
+
+  if (!raw) {
+    return {};
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch (error) {
+    console.error('Unable to parse release artwork cache', error);
+    safeStorageRemove(RELEASE_ARTWORK_CACHE_KEY);
+    return {};
+  }
+}
+
+function saveArtworkCache(cache) {
+  safeStorageSet(RELEASE_ARTWORK_CACHE_KEY, JSON.stringify(cache));
+}
+
+async function fetchReleaseArtwork(title) {
+  // iTunes Search API supports CORS and returns album artwork for catalog cards quickly.
+  const endpoint = `https://itunes.apple.com/search?term=${encodeURIComponent(`Infinite Dimensions ${title}`)}&entity=album&limit=1`;
+  const response = await fetch(endpoint, { cache: 'force-cache' });
+
+  if (!response.ok) {
+    throw new Error(`Artwork request failed with status ${response.status}`);
+  }
+
+  const payload = await response.json();
+  const [result] = payload.results || [];
+
+  if (!result?.artworkUrl100) {
+    return '';
+  }
+
+  // Upgrade 100x100 results to 600x600 when available for sharper release cards.
+  return result.artworkUrl100.replace('100x100bb', '600x600bb');
+}
+
+function queueArtworkHydration(img, title, artworkCache) {
+  const cachedArtwork = artworkCache[title];
+  if (cachedArtwork) {
+    img.src = cachedArtwork;
+    return;
+  }
+
+  fetchReleaseArtwork(title)
+    .then((artworkUrl) => {
+      if (!artworkUrl) {
+        return;
+      }
+
+      artworkCache[title] = artworkUrl;
+      saveArtworkCache(artworkCache);
+      img.src = artworkUrl;
+    })
+    .catch((error) => {
+      console.warn(`Unable to load artwork for "${title}"`, error);
+    });
 }
 
 function renderReleases() {
@@ -587,17 +654,26 @@ function renderReleases() {
   }
 
   releaseGrid.innerHTML = '';
+  const artworkCache = loadArtworkCache();
 
   RELEASES.forEach((release) => {
     const card = document.createElement('article');
     card.className = 'track-card release-card';
+
+    const artwork = document.createElement('img');
+    artwork.className = 'release-artwork';
+    artwork.src = RELEASE_ARTWORK_FALLBACK_SVG;
+    artwork.alt = `${release.title} album artwork`;
+    artwork.loading = 'lazy';
+    artwork.decoding = 'async';
+    artwork.title = 'Album artwork pulled from remote music catalog metadata.';
 
     const title = document.createElement('h3');
     title.textContent = `🎵 ${release.title}`;
 
     const helper = document.createElement('p');
     helper.className = 'microcopy';
-    helper.textContent = 'Open YouTube or jump to a store search link.';
+    helper.textContent = 'Artwork auto-loads from remote catalog metadata. Use links to verify on each platform.';
 
     const actions = document.createElement('div');
     actions.className = 'release-actions';
@@ -608,8 +684,10 @@ function renderReleases() {
       <a class="btn btn-ghost release-link" href="${buildStoreSearchUrl('https://play.google.com/store/search?q=', `${release.title} music`)}&c=music_and_audio" target="_blank" rel="noreferrer noopener" title="Search this release on Google Play">📲 Google Play</a>
     `;
 
-    card.append(title, helper, actions);
+    card.append(artwork, title, helper, actions);
     releaseGrid.appendChild(card);
+
+    queueArtworkHydration(artwork, release.title, artworkCache);
   });
 
   releaseSyncNote.textContent = `✅ Loaded ${RELEASES.length} releases from your YouTube Releases page scrape.`;

@@ -262,6 +262,16 @@ h2 {
   gap: 0.8rem;
 }
 
+
+.release-artwork {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 0.8rem;
+  border: 1px solid var(--border);
+  background: #090b1a;
+}
+
 .release-actions {
   display: flex;
   flex-wrap: wrap;
