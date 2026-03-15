@@ -74,6 +74,35 @@ const SESSION_DURATION_MS = 30 * 60 * 1000;
 // Set this back to false when production auth is ready so community actions are protected again.
 const INSECURE_ADMIN_TEST_MODE = true;
 
+// Some browsers/privacy modes can block localStorage and throw SecurityError.
+// These wrappers keep the app responsive so non-auth features (like Releases) still load.
+function safeStorageGet(key) {
+  try {
+    return window.localStorage.getItem(key);
+  } catch (error) {
+    console.warn(`Storage read blocked for ${key}. Falling back to in-memory defaults.`, error);
+    return null;
+  }
+}
+
+function safeStorageSet(key, value) {
+  try {
+    window.localStorage.setItem(key, value);
+    return true;
+  } catch (error) {
+    console.warn(`Storage write blocked for ${key}. Changes will not persist.`, error);
+    return false;
+  }
+}
+
+function safeStorageRemove(key) {
+  try {
+    window.localStorage.removeItem(key);
+  } catch (error) {
+    console.warn(`Storage remove blocked for ${key}.`, error);
+  }
+}
+
 function setOauthFlowStatus(message, isError = false) {
   if (!oauthFlowStatus) {
     return;
@@ -84,7 +113,7 @@ function setOauthFlowStatus(message, isError = false) {
 }
 
 function loadSession() {
-  const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+  const raw = safeStorageGet(SESSION_STORAGE_KEY);
 
   if (!raw) {
     return null;
@@ -99,13 +128,13 @@ function loadSession() {
     return parsed;
   } catch (error) {
     console.error('Unable to parse social session', error);
-    localStorage.removeItem(SESSION_STORAGE_KEY);
+    safeStorageRemove(SESSION_STORAGE_KEY);
     return null;
   }
 }
 
 function clearSession() {
-  localStorage.removeItem(SESSION_STORAGE_KEY);
+  safeStorageRemove(SESSION_STORAGE_KEY);
   updateSessionStatus(null);
 }
 
@@ -120,7 +149,7 @@ function createSession(profile) {
     expiresAt: now + SESSION_DURATION_MS,
   };
 
-  localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+  safeStorageSet(SESSION_STORAGE_KEY, JSON.stringify(session));
   updateSessionStatus(session);
   return session;
 }
@@ -140,7 +169,7 @@ function refreshSession() {
     expiresAt: Date.now() + SESSION_DURATION_MS,
   };
 
-  localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(refreshedSession));
+  safeStorageSet(SESSION_STORAGE_KEY, JSON.stringify(refreshedSession));
   updateSessionStatus(refreshedSession);
   setOauthFlowStatus(`Session refreshed for @${refreshedSession.username} via ${refreshedSession.provider}.`);
 }
@@ -178,7 +207,7 @@ function isValidUsername(value) {
 }
 
 function loadSocialAccounts() {
-  const raw = localStorage.getItem(SOCIAL_ACCOUNT_STORAGE_KEY);
+  const raw = safeStorageGet(SOCIAL_ACCOUNT_STORAGE_KEY);
 
   if (!raw) {
     return {};
@@ -189,13 +218,13 @@ function loadSocialAccounts() {
     return parsed && typeof parsed === 'object' ? parsed : {};
   } catch (error) {
     console.error('Unable to parse social accounts', error);
-    localStorage.removeItem(SOCIAL_ACCOUNT_STORAGE_KEY);
+    safeStorageRemove(SOCIAL_ACCOUNT_STORAGE_KEY);
     return {};
   }
 }
 
 function saveSocialAccounts(accounts) {
-  localStorage.setItem(SOCIAL_ACCOUNT_STORAGE_KEY, JSON.stringify(accounts));
+  safeStorageSet(SOCIAL_ACCOUNT_STORAGE_KEY, JSON.stringify(accounts));
 }
 
 const defaultThreads = [
@@ -241,7 +270,7 @@ function setBoardStatus(message, isError = false) {
 }
 
 function loadProfile() {
-  const raw = localStorage.getItem(ACCOUNT_STORAGE_KEY);
+  const raw = safeStorageGet(ACCOUNT_STORAGE_KEY);
 
   if (!raw) {
     return null;
@@ -251,7 +280,7 @@ function loadProfile() {
     return JSON.parse(raw);
   } catch (error) {
     console.error('Unable to parse account profile', error);
-    localStorage.removeItem(ACCOUNT_STORAGE_KEY);
+    safeStorageRemove(ACCOUNT_STORAGE_KEY);
     return null;
   }
 }
@@ -280,7 +309,7 @@ function setAuthView(profile) {
 }
 
 function saveProfile(profile) {
-  localStorage.setItem(ACCOUNT_STORAGE_KEY, JSON.stringify(profile));
+  safeStorageSet(ACCOUNT_STORAGE_KEY, JSON.stringify(profile));
   setAuthView(profile);
 }
 
@@ -316,7 +345,7 @@ function updateBoardPostingState(profile) {
 }
 
 function loadThreads() {
-  const raw = localStorage.getItem(THREAD_STORAGE_KEY);
+  const raw = safeStorageGet(THREAD_STORAGE_KEY);
 
   if (!raw) {
     return defaultThreads;
@@ -332,7 +361,7 @@ function loadThreads() {
 }
 
 function saveThreads(threads) {
-  localStorage.setItem(THREAD_STORAGE_KEY, JSON.stringify(threads));
+  safeStorageSet(THREAD_STORAGE_KEY, JSON.stringify(threads));
 }
 
 function formatDate(dateText) {
@@ -658,7 +687,7 @@ if (socialButtons.length) {
 
 if (logoutBtn) {
   logoutBtn.addEventListener('click', () => {
-    localStorage.removeItem(ACCOUNT_STORAGE_KEY);
+    safeStorageRemove(ACCOUNT_STORAGE_KEY);
     clearSession();
     setAuthView(null);
     setAccountMessage('You have logged out. See you soon.');
