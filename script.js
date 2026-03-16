@@ -654,7 +654,8 @@ function queueArtworkHydration(img, title, artworkCache) {
 
 
 function buildSpotifySearchUrl(title) {
-  const query = encodeURIComponent(title.trim());
+  // Artist-scoped Spotify queries are more reliable than plain-title searches for this catalog.
+  const query = encodeURIComponent(`artist:"Infinite Dimensions" album:"${title.trim()}"`);
   return `https://open.spotify.com/search/${query}`;
 }
 
@@ -782,12 +783,19 @@ function renderReleases() {
       <a class="btn btn-ghost release-link" href="${buildStoreSearchUrl('https://play.google.com/store/search?q=', `${release.title} music`)}&c=music_and_audio" target="_blank" rel="noreferrer noopener" title="Search this release on Google Play">📲 Google Play</a>
     `;
 
+    const youtubeRow = document.createElement('div');
+    youtubeRow.className = 'release-secondary-actions';
+    // YouTube is placed below the primary store row so the layout stays clean while still offering a quick fallback.
+    youtubeRow.innerHTML = `
+      <a class="btn btn-ghost release-link release-youtube-link" href="${release.youtubeUrl}" target="_blank" rel="noreferrer noopener" title="Open this release on YouTube">▶️ YouTube</a>
+    `;
+
     const streamPanel = createEmbeddedStreamPanel(release);
     if (streamPanel.toggleButton) {
       actions.prepend(streamPanel.toggleButton);
     }
 
-    card.append(artwork, title, helper, actions, streamPanel.wrapper);
+    card.append(artwork, title, helper, actions, youtubeRow, streamPanel.wrapper);
     releaseGrid.appendChild(card);
 
     queueArtworkHydration(artwork, release.title, artworkCache);

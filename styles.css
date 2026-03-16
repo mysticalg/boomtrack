@@ -283,6 +283,17 @@ h2 {
   flex: 1 1 100%;
 }
 
+
+.release-secondary-actions {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.release-youtube-link {
+  width: 100%;
+  justify-content: center;
+}
+
 .release-stream-panel {
   display: none;
   border: 1px solid var(--border);
