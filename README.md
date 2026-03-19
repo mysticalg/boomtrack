@@ -6,6 +6,8 @@ Official website for the Infinite Dimensions music project.
 
 Visit the live site here: [https://mysticalg.kesug.com](https://mysticalg.kesug.com)
 
+GitHub Pages mirror: [https://mysticalg.github.io/boomtrack/](https://mysticalg.github.io/boomtrack/)
+
 ## Local Files
 
 - `index.html` — main page content
@@ -17,3 +19,8 @@ Visit the live site here: [https://mysticalg.kesug.com](https://mysticalg.kesug.
 ## Deployment
 
 Deployment instructions are documented in [`DEPLOYMENT.md`](DEPLOYMENT.md).
+
+## Support
+
+If you'd like to support this project, you can buy me a coffee:
+[buymeacoffee.com/dhooksterm](https://buymeacoffee.com/dhooksterm)
